@@ -1,19 +1,20 @@
 
 import "./App.css";
-import "./index.css";
 import HeroSection from "./components/Hero";
 import Features from "./components/Features";
 import CTA from "./components/CTA";
 import Footer from "./components/Footer";
 
+import CustomScrollbar from "./components/CustomScrollbar";
+
 function App() {
   return (
-    <div className="App">
-      <HeroSection/>
+    <CustomScrollbar>
+      <HeroSection />
       <Features />
       <CTA />
       <Footer />
-    </div>
+    </CustomScrollbar>
   );
 }
 export default App;

@@ -1,3 +1,22 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Hide default scrollbar */
+.custom-scrollbar {
+  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none;  /* IE and Edge */
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari, Opera */
+}
+
+/* Custom scrollbar container */
+.scroll-container {
+  position: relative;
+  height: 100vh;
+  overflow-y: auto;
+  background: #f0f0f0;
+}
+

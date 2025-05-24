@@ -1,5 +1,8 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import './Hero.css';
+import heroBg1 from '../assets/images/hero-bg1.jpg';
+import heroVideo1 from '../assets/videos/hero-bg1.mp4';
 
 const HeroSection = () => {
   const [activeSlide, setActiveSlide] = useState(0);
@@ -17,7 +20,7 @@ const HeroSection = () => {
   const mediaContent = [
     { 
       type: 'image', 
-      src: './image1.jpg', 
+      src: heroBg1,
       alt: 'Luxury Interior Design',
       title: 'Exquisite Design Solutions',
       subtitle: 'Transform your space with our award-winning interior design services',
@@ -27,8 +30,8 @@ const HeroSection = () => {
     },
     { 
       type: 'video', 
-      src: './image2.mp4', 
-      poster: 'path/to/poster1.jpg',
+      src: heroVideo1,
+      poster: heroBg1, // Use a real poster if available
       alt: 'Architectural Masterpiece Showcase',
       title: 'Architectural Excellence',
       subtitle: 'Blending innovation with timeless design principles for extraordinary spaces',
@@ -38,35 +41,26 @@ const HeroSection = () => {
     },
     { 
       type: 'image', 
-      src: './image1.jpg', 
-      alt: 'Premium Furniture Collection',
-      title: 'Artisanal Craftsmanship',
-      subtitle: 'Handcrafted furniture pieces that elevate your living experience',
-      category: 'Furniture',
-      tags: ['handcrafted', 'premium', 'exclusive'],
-      cta: 'Shop Collection'
-    },
-    { 
-      type: 'image', 
-      src: './image1.jpg', 
-      alt: 'Smart Home Technology',
-      title: 'Intelligent Living Spaces',
-      subtitle: 'Seamlessly integrated technology for the modern lifestyle',
-      category: 'Smart Home',
-      tags: ['innovative', 'connected', 'automated'],
-      cta: 'Discover Solutions'
+      src: heroBg1,
+      alt: 'Luxury Interior Design',
+      title: 'Exquisite Design Solutions',
+      subtitle: 'Transform your space with our award-winning interior design services',
+      category: 'Interior Design',
+      tags: ['modern', 'luxury', 'minimal'],
+      cta: 'Explore Our Portfolio'
     },
     { 
       type: 'video', 
-      src: './1.mp4', 
-      poster: 'path/to/poster2.jpg',
-      alt: 'Design Process Video',
-      title: 'Visionary Creation Process',
-      subtitle: 'Experience our meticulous approach to bringing concepts to reality',
-      category: 'Design Process',
-      tags: ['behind-the-scenes', 'creative', 'professional'],
-      cta: 'Learn Our Method'
+      src: heroVideo1,
+      poster: heroBg1, // Use a real poster if available
+      alt: 'Architectural Masterpiece Showcase',
+      title: 'Architectural Excellence',
+      subtitle: 'Blending innovation with timeless design principles for extraordinary spaces',
+      category: 'Architecture',
+      tags: ['contemporary', 'sustainable', 'cutting-edge'],
+      cta: 'View Case Studies'
     },
+    // Add more images/videos as needed, importing them at the top and referencing here
   ];
 
   // Initialize component with animations
