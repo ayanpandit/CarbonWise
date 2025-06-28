@@ -72,35 +72,117 @@ const Hero = () => {
         />
       </div>
 
-      {/* Navigation Bar */}
+      {/* Enhanced Premium Navigation Bar */}
       <nav 
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-700 ease-out ${
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-out will-change-transform ${
           isScrolled 
-            ? 'bg-white/10 backdrop-blur-lg border-b border-white/20' 
+            ? 'bg-black/20 backdrop-blur-xl border-b border-white/10 shadow-2xl' 
             : 'bg-transparent'
         }`}
         style={{ 
           opacity: contentOpacity,
-          transform: `translateY(${isScrolled ? '0' : '-100%'})` 
+          transform: `translate3d(0, ${isScrolled ? '0' : '-100%'}, 0)` 
         }}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center space-x-2">
-              <Leaf className="h-8 w-8 text-green-400" />
-              <span className="text-xl font-bold text-white">EcoCalc</span>
+          <div className="flex items-center justify-between h-20">
+            {/* Logo Section */}
+            <div className="flex items-center space-x-3 group">
+              <div className="relative">
+                {/* Animated logo background */}
+                <div className="absolute inset-0 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full blur-sm opacity-50 group-hover:opacity-75 transition-opacity duration-300 animate-pulse-glow"></div>
+                <div className="relative bg-gradient-to-br from-green-400 to-emerald-600 p-2 rounded-full shadow-lg transform group-hover:scale-110 transition-transform duration-300">
+                  <Leaf className="h-8 w-8 text-white animate-wave" />
+                </div>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-2xl font-bold bg-gradient-to-r from-white to-green-100 bg-clip-text text-transparent tracking-tight">
+                  CarbonWise
+                </span>
+                <span className="text-xs text-green-300/80 font-medium -mt-1 hidden sm:block">
+                  Carbon Calculator
+                </span>
+              </div>
             </div>
-            <div className="hidden md:flex items-center space-x-8">
-              <a href="#" className="text-white/90 hover:text-white transition-colors">Calculator</a>
-              <a href="#" className="text-white/90 hover:text-white transition-colors">About</a>
-              <a href="#" className="text-white/90 hover:text-white transition-colors">Impact</a>
-              <a href="#" className="text-white/90 hover:text-white transition-colors">Contact</a>
-              <button className="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-full transition-all duration-300 transform hover:scale-105">
-                Get Started
+
+            {/* Center Navigation Links - Desktop */}
+            <div className="hidden lg:flex items-center justify-center flex-1">
+              <div className="flex items-center space-x-1 bg-white/5 backdrop-blur-md rounded-full p-2 border border-white/10">
+                {[
+                  { name: 'Calculator', href: '#calculator' },
+                  { name: 'About', href: '#about' },
+                  { name: 'Impact', href: '#impact' },
+                  { name: 'Contact', href: '#contact' }
+                ].map((item, index) => (
+                  <a
+                    key={index}
+                    href={item.href}
+                    className="relative px-6 py-3 text-white/90 hover:text-white font-medium text-sm transition-all duration-300 rounded-full group overflow-hidden"
+                  >
+                    {/* Hover background effect */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-green-400/20 to-emerald-400/20 rounded-full transform scale-0 group-hover:scale-100 transition-transform duration-300 origin-center"></div>
+                    <div className="absolute inset-0 bg-white/5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <span className="relative z-10">{item.name}</span>
+                    
+                    {/* Active indicator dot */}
+                    <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-green-400 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  </a>
+                ))}
+              </div>
+            </div>
+
+            {/* Right Section - CTA Button & Mobile Menu */}
+            <div className="flex items-center space-x-4">
+              {/* CTA Button */}
+              <button className="hidden sm:flex items-center space-x-2 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-6 py-3 rounded-full font-semibold text-sm transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl group relative overflow-hidden">
+                {/* Button shine effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                <Calculator className="h-4 w-4 relative z-10 group-hover:rotate-12 transition-transform duration-300" />
+                <span className="relative z-10">Get Started</span>
+              </button>
+
+              {/* Mobile Menu Button */}
+              <button className="lg:hidden relative w-10 h-10 bg-white/10 backdrop-blur-md rounded-full border border-white/20 flex items-center justify-center group hover:bg-white/20 transition-all duration-300">
+                <div className="space-y-1.5">
+                  <div className="w-5 h-0.5 bg-white rounded-full group-hover:bg-green-300 transition-colors duration-300"></div>
+                  <div className="w-5 h-0.5 bg-white rounded-full group-hover:bg-green-300 transition-colors duration-300"></div>
+                  <div className="w-5 h-0.5 bg-white rounded-full group-hover:bg-green-300 transition-colors duration-300"></div>
+                </div>
               </button>
             </div>
           </div>
+
+          {/* Mobile Menu Dropdown */}
+          <div className="lg:hidden absolute top-full left-0 right-0 bg-black/30 backdrop-blur-xl border-b border-white/10 transform -translate-y-full opacity-0 pointer-events-none transition-all duration-300">
+            <div className="px-4 py-6 space-y-4">
+              {[
+                { name: 'Calculator', href: '#calculator' },
+                { name: 'About', href: '#about' },
+                { name: 'Impact', href: '#impact' },
+                { name: 'Contact', href: '#contact' }
+              ].map((item, index) => (
+                <a
+                  key={index}
+                  href={item.href}
+                  className="block px-4 py-3 text-white/90 hover:text-white font-medium rounded-lg hover:bg-white/10 transition-all duration-300 border border-transparent hover:border-green-400/30"
+                >
+                  {item.name}
+                </a>
+              ))}
+              
+              {/* Mobile CTA */}
+              <div className="pt-4 border-t border-white/10">
+                <button className="w-full flex items-center justify-center space-x-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-4 rounded-full font-semibold transition-all duration-300 transform hover:scale-105">
+                  <Calculator className="h-5 w-5" />
+                  <span>Get Started</span>
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
+
+        {/* Premium glow effect */}
+        <div className="absolute inset-0 bg-gradient-to-r from-green-400/5 via-transparent to-emerald-400/5 pointer-events-none"></div>
       </nav>
 
       {/* Device Frame Section */}
@@ -112,9 +194,9 @@ const Hero = () => {
           pointerEvents: frameOpacity > 0.1 ? 'auto' : 'none'
         }}
       >
-        {/* Desktop Frame */}
+        {/* Desktop Frame - Increased Size */}
         <div className="hidden lg:block relative">
-          <div className="relative w-[800px] h-[500px]">
+          <div className="relative w-[950px] h-[600px]">
             {/* Laptop Frame */}
             <div className="relative w-full h-full bg-gradient-to-b from-gray-800 to-gray-900 rounded-t-2xl shadow-2xl">
               {/* Screen Bezel */}
@@ -157,22 +239,22 @@ const Hero = () => {
               <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-gray-700 rounded-full" />
             </div>
             
-            {/* Laptop Base */}
-            <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-[850px] h-8 bg-gradient-to-b from-gray-700 to-gray-800 rounded-b-3xl shadow-lg">
-              <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-16 h-1 bg-gray-600 rounded-full" />
+            {/* Laptop Base - Adjusted for larger frame */}
+            <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-[1000px] h-8 bg-gradient-to-b from-gray-700 to-gray-800 rounded-b-3xl shadow-lg">
+              <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-20 h-1 bg-gray-600 rounded-full" />
             </div>
           </div>
         </div>
 
-        {/* Mobile Frame */}
+        {/* Mobile Frame - Increased Size */}
         <div className="lg:hidden relative">
-          <div className="relative w-[280px] h-[580px]">
+          <div className="relative w-[340px] h-[700px]">
             {/* Phone Frame */}
-            <div className="relative w-full h-full bg-gradient-to-b from-gray-800 to-gray-900 rounded-[45px] shadow-2xl p-2">
+            <div className="relative w-full h-full bg-gradient-to-b from-gray-800 to-gray-900 rounded-[50px] shadow-2xl p-2">
               {/* Screen */}
-              <div className="relative w-full h-full bg-black rounded-[35px] overflow-hidden">
+              <div className="relative w-full h-full bg-black rounded-[42px] overflow-hidden">
                 {/* Notch */}
-                <div className="absolute top-4 left-1/2 transform -translate-x-1/2 w-20 h-6 bg-black rounded-full z-10" />
+                <div className="absolute top-4 left-1/2 transform -translate-x-1/2 w-24 h-7 bg-black rounded-full z-10" />
                 
                 {/* Screen Content */}
                 <div className="relative w-full h-full pt-8">
@@ -205,15 +287,15 @@ const Hero = () => {
                 </div>
                 
                 {/* Screen Reflection */}
-                <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-transparent pointer-events-none rounded-[35px]" />
+                <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-transparent pointer-events-none rounded-[42px]" />
               </div>
               
               {/* Power Button */}
-              <div className="absolute right-0 top-32 w-1 h-12 bg-gray-700 rounded-l-full" />
+              <div className="absolute right-0 top-32 w-1 h-14 bg-gray-700 rounded-l-full" />
               
               {/* Volume Buttons */}
-              <div className="absolute left-0 top-28 w-1 h-8 bg-gray-700 rounded-r-full" />
-              <div className="absolute left-0 top-40 w-1 h-8 bg-gray-700 rounded-r-full" />
+              <div className="absolute left-0 top-28 w-1 h-10 bg-gray-700 rounded-r-full" />
+              <div className="absolute left-0 top-42 w-1 h-10 bg-gray-700 rounded-r-full" />
             </div>
           </div>
         </div>
