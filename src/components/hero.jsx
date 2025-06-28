@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronDown, Leaf, Calculator, Users, Award } from 'lucide-react';
 
-const Hero = () => {
+const hero = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [scrollY, setScrollY] = useState(0);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -293,4 +293,4 @@ const Hero = () => {
   );
 };
 
-export default Hero;
+export default hero;
