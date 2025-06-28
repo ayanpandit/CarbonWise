@@ -1,17 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronDown, Leaf, Calculator, Users, Award } from 'lucide-react';
+import image1 from '../assets/images/1.jpg';
+import image2 from '../assets/images/2.jpg';
+import image3 from '../assets/images/3.jpg';
+import video1 from '../assets/videos/1.mp4';
+import video2 from '../assets/videos/2.mp4';
+import newBgImage from '../assets/images/newbg.jpg';
 
-const hero = () => {
+const Hero = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [scrollY, setScrollY] = useState(0);
   const [isScrolled, setIsScrolled] = useState(false);
 
   // Media files for slideshow
   const mediaFiles = [
-    { type: 'image', src: '/src/assets/images/2.jpg', alt: 'Carbon Calculator Dashboard' },
-    { type: 'video', src: '/src/assets/videos/1.mp4' },
-    { type: 'image', src: '/src/assets/images/3.jpg', alt: 'Environmental Impact' },
-    { type: 'video', src: '/src/assets/videos/2.mp4' },
+    { type: 'image', src: image2, alt: 'Carbon Calculator Dashboard' },
+    { type: 'video', src: video1 },
+    { type: 'image', src: image3, alt: 'Environmental Impact' },
+    { type: 'video', src: video2 },
   ];
 
   // Handle scroll effects
@@ -48,7 +54,7 @@ const hero = () => {
         style={{ opacity: 1 - scrollY / 500 }}
       >
         <img 
-          src="/src/assets/images/1.jpg" 
+          src={image1} 
           alt="Background" 
           className="w-full h-full object-cover"
         />
@@ -60,7 +66,7 @@ const hero = () => {
         style={{ opacity: Math.min(1, scrollY / 500) }}
       >
         <img 
-          src="/src/assets/images/newbg.jpg" 
+          src={newBgImage} 
           alt="New Background" 
           className="w-full h-full object-cover"
         />
@@ -293,4 +299,4 @@ const hero = () => {
   );
 };
 
-export default hero;
+export default Hero;
