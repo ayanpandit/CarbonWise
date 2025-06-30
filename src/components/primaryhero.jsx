@@ -6,6 +6,7 @@ import image1 from '../assets/images/1.jpg';
 import image2 from '../assets/images/2.jpg';
 import image3 from '../assets/images/3.jpg';
 import bg1 from '../assets/images/bg1.jpg';
+import bg1Mobile from '../assets/images/bg1(2).jpg';
 
 // Import videos
 import video1 from '../assets/videos/1.mp4';
@@ -16,6 +17,7 @@ const PrimaryHero = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
   const [progress, setProgress] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
   const videoRef = useRef(null);
   const intervalRef = useRef(null);
   const progressRef = useRef(null);
@@ -107,15 +109,29 @@ const PrimaryHero = () => {
 
   // Auto-play functionality
   const nextSlide = () => {
-    setCurrentIndex((prev) => (prev + 1) % mediaItems.length);
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setCurrentIndex((prev) => (prev + 1) % mediaItems.length);
+      setIsTransitioning(false);
+    }, 150);
   };
 
   const prevSlide = () => {
-    setCurrentIndex((prev) => (prev - 1 + mediaItems.length) % mediaItems.length);
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setCurrentIndex((prev) => (prev - 1 + mediaItems.length) % mediaItems.length);
+      setIsTransitioning(false);
+    }, 150);
   };
 
   const goToSlide = (index) => {
-    setCurrentIndex(index);
+    if (index !== currentIndex) {
+      setIsTransitioning(true);
+      setTimeout(() => {
+        setCurrentIndex(index);
+        setIsTransitioning(false);
+      }, 150);
+    }
   };
 
   const togglePlayPause = () => {
@@ -171,27 +187,59 @@ const PrimaryHero = () => {
     };
   }, []);
 
+  // Responsive background image with improved detection
+  const [isMobile, setIsMobile] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(0);
+  
+  useEffect(() => {
+    const checkMobile = () => {
+      const width = window.innerWidth;
+      const mobile = width <= 768; // Mobile breakpoint
+      console.log('Mobile check:', mobile, 'Width:', width);
+      setWindowWidth(width);
+      setIsMobile(mobile);
+    };
+    
+    // Initial check
+    if (typeof window !== 'undefined') {
+      checkMobile();
+    }
+    
+    // Add resize listener
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   return (
     <section className="relative min-h-screen w-full overflow-hidden">
       {/* Background Image with Overlay */}
       <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        className="absolute inset-0 transition-all duration-500"
         style={{
-          backgroundImage: `url(${bg1})`
+          backgroundImage: isMobile ? `url("${bg1Mobile}")` : `url("${bg1}")`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          backgroundColor: '#1a1a2e' // Fallback color
         }}
+        key={isMobile ? 'mobile' : 'desktop'}
       >
-        <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/70"></div>
+        <div className={`absolute inset-0 transition-all duration-500 ${
+          isMobile 
+            ? 'bg-gradient-to-r from-black/70 via-black/50 to-black/70' 
+            : 'bg-gradient-to-r from-black/70 via-black/50 to-black/70'
+        }`}></div>
       </div>
 
       {/* Main Content */}
-      <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between min-h-screen">
+      <div className={`relative z-10 flex flex-col items-center justify-between min-h-screen ${isMobile ? 'space-y-8' : 'lg:flex-row'}`}>
         
         {/* Left Content */}
         <div className="flex-1 px-6 lg:px-12 py-12 lg:py-0">
           <div className="max-w-2xl mx-auto lg:mx-0 text-center lg:text-left">
             
             {/* Badge */}
-            <div className="inline-flex items-center gap-2 bg-green-500/20 backdrop-blur-sm border border-green-400/30 rounded-full px-4 py-2 mb-6">
+            <div className="mt-6 inline-flex items-center gap-2 bg-green-500/20 backdrop-blur-sm border border-green-400/30 rounded-full px-4 py-2 mb-6">
               <Leaf className="w-4 h-4 text-green-400" />
               <span className="text-green-300 text-sm font-medium">Carbon Footprint Calculator</span>
             </div>
@@ -247,41 +295,63 @@ const PrimaryHero = () => {
 
         {/* Right Media Slideshow */}
         <div className="flex-1 px-6 lg:px-12 py-12 lg:py-0">
-          <div className="relative max-w-2xl mx-auto">
-            
+          <div className="relative max-w-2xl mx-auto w-full">
             {/* Media Container */}
-            <div className="relative aspect-video rounded-2xl overflow-hidden shadow-2xl bg-black/20 backdrop-blur-sm border border-white/10">
-              
+            <div className={`relative rounded-2xl overflow-hidden shadow-2xl bg-black/20 backdrop-blur-sm border border-white/10 w-full ${
+              isMobile ? 'aspect-[4/3] min-h-[300px]' : 'aspect-video min-h-[400px]'
+            }`} style={{ 
+              contain: 'layout size style',
+              willChange: 'auto'
+            }}>
               {/* Media Content */}
-              <div className="relative w-full h-full">
-                {currentItem.type === 'image' ? (
-                  <img
-                    src={currentItem.src}
-                    alt={currentItem.alt}
-                    className="w-full h-full object-cover transition-all duration-1000 ease-in-out"
-                  />
-                ) : (
-                  <video
-                    ref={videoRef}
-                    src={currentItem.src}
-                    className="w-full h-full object-cover"
-                    onLoadedMetadata={handleVideoLoad}
-                    onEnded={handleVideoEnd}
-                    muted
-                    playsInline
-                  />
-                )}
-                
+              <div className="absolute inset-0 w-full h-full" style={{ contain: 'layout' }}>
+                <div className={`absolute inset-0 w-full h-full transition-opacity duration-300 ease-in-out ${
+                  isTransitioning ? 'opacity-0' : 'opacity-100'
+                }`}>
+                  {currentItem.type === 'image' ? (
+                    <img
+                      src={currentItem.src}
+                      alt={currentItem.alt}
+                      className="absolute inset-0 w-full h-full object-cover"
+                      style={{ 
+                        width: '100%', 
+                        height: '100%',
+                        objectFit: 'cover',
+                        display: 'block'
+                      }}
+                    />
+                  ) : (
+                    <video
+                      ref={videoRef}
+                      src={currentItem.src}
+                      className="absolute inset-0 w-full h-full object-cover"
+                      style={{ 
+                        width: '100%', 
+                        height: '100%',
+                        objectFit: 'cover',
+                        display: 'block'
+                      }}
+                      onLoadedMetadata={handleVideoLoad}
+                      onEnded={handleVideoEnd}
+                      muted
+                      playsInline
+                    />
+                  )}
+                </div>
                 {/* Gradient Overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+                {/* Media Info - ensure it's above arrows on mobile */}
+                <div className={`absolute left-0 right-0 p-6 text-white pointer-events-none transition-all duration-300 ${
+                  isMobile ? 'bottom-16 z-50' : 'bottom-0 z-10'
+                } ${isTransitioning ? 'opacity-0 translate-y-2' : 'opacity-100 translate-y-0'}`}>
+                  <h3 className={`font-bold mb-2 transition-all duration-300 ${isMobile ? 'text-lg' : 'text-xl'}`}>
+                    {currentItem.title}
+                  </h3>
+                  <p className={`text-gray-300 leading-relaxed transition-all duration-300 ${isMobile ? 'text-xs' : 'text-sm'}`}>
+                    {currentItem.description}
+                  </p>
+                </div>
               </div>
-
-              {/* Media Info */}
-              <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-                <h3 className="text-xl font-bold mb-2">{currentItem.title}</h3>
-                <p className="text-sm text-gray-300 leading-relaxed">{currentItem.description}</p>
-              </div>
-
               {/* Progress Bar */}
               <div className="absolute top-0 left-0 right-0 h-1 bg-white/20">
                 <div 
@@ -289,31 +359,27 @@ const PrimaryHero = () => {
                   style={{ width: `${progress}%` }}
                 ></div>
               </div>
-
               {/* Play/Pause Button */}
               <button
                 onClick={togglePlayPause}
-                className="absolute top-4 right-4 bg-black/50 backdrop-blur-sm hover:bg-black/70 text-white p-3 rounded-full transition-all duration-300 hover:scale-110"
+                className={`absolute top-4 right-4 bg-black/50 backdrop-blur-sm hover:bg-black/70 text-white p-3 rounded-full transition-all duration-300 hover:scale-110 ${isMobile ? 'z-30' : 'z-20'}`}
               >
                 {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
               </button>
-
               {/* Navigation Arrows */}
               <button
                 onClick={prevSlide}
-                className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 backdrop-blur-sm hover:bg-black/70 text-white p-3 rounded-full transition-all duration-300 hover:scale-110"
+                className={`absolute left-4 bg-black/70 backdrop-blur-sm hover:bg-black/90 text-white rounded-full transition-all duration-200 hover:scale-110 z-40 ${isMobile ? 'p-2 bottom-4' : 'p-3 top-1/2 -translate-y-1/2'}`}
               >
-                <ChevronLeft className="w-5 h-5" />
+                <ChevronLeft className={`transition-all duration-200 ${isMobile ? 'w-4 h-4' : 'w-5 h-5'}`} />
               </button>
-              
               <button
                 onClick={nextSlide}
-                className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 backdrop-blur-sm hover:bg-black/70 text-white p-3 rounded-full transition-all duration-300 hover:scale-110"
+                className={`absolute right-4 bg-black/70 backdrop-blur-sm hover:bg-black/90 text-white rounded-full transition-all duration-200 hover:scale-110 z-40 ${isMobile ? 'p-2 bottom-4' : 'p-3 top-1/2 -translate-y-1/2'}`}
               >
-                <ChevronRight className="w-5 h-5" />
+                <ChevronRight className={`transition-all duration-200 ${isMobile ? 'w-4 h-4' : 'w-5 h-5'}`} />
               </button>
             </div>
-
             {/* Slide Indicators */}
             <div className="flex justify-center gap-3 mt-6">
               {mediaItems.map((_, index) => (
@@ -328,7 +394,6 @@ const PrimaryHero = () => {
                 />
               ))}
             </div>
-
             {/* Media Type Indicator */}
             <div className="absolute -top-3 -right-3 bg-gradient-to-r from-green-500 to-blue-500 text-white px-3 py-1 rounded-full text-xs font-medium">
               {currentIndex + 1} / {mediaItems.length}
@@ -342,14 +407,6 @@ const PrimaryHero = () => {
         <button className="group bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white p-4 rounded-full shadow-2xl transition-all duration-300 transform hover:scale-110 hover:rotate-12">
           <Leaf className="w-6 h-6 group-hover:animate-pulse" />
         </button>
-      </div>
-
-      {/* Scroll Indicator */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center text-white/60 animate-bounce">
-        <div className="text-sm mb-2">Scroll to explore</div>
-        <div className="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center">
-          <div className="w-1 h-3 bg-white/60 rounded-full mt-2 animate-pulse"></div>
-        </div>
       </div>
     </section>
   );
