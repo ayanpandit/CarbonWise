@@ -1,266 +1,358 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { ChevronLeft, ChevronRight, Play, Pause, Leaf, Globe, Factory } from 'lucide-react';
+
+// Import images
 import image1 from '../assets/images/1.jpg';
 import image2 from '../assets/images/2.jpg';
 import image3 from '../assets/images/3.jpg';
+import bg1 from '../assets/images/bg1.jpg';
+
+// Import videos
 import video1 from '../assets/videos/1.mp4';
 import video2 from '../assets/videos/2.mp4';
+import video3 from '../assets/videos/3.mp4';
 
-const PrimaryHero = React.memo(({ frameOpacity = 1, frameScale = 1, scrollY = 0 }) => {
-  const [currentSlide, setCurrentSlide] = useState(0);
-  
-  // Memoize media files to prevent re-creation
-  const mediaFiles = useMemo(() => [
-    { type: 'image', src: image2, alt: 'Carbon Calculator Dashboard' },
-    { type: 'video', src: video1 },
-    { type: 'image', src: image3, alt: 'Environmental Impact' },
-    { type: 'video', src: video2 },
-  ], []);
+const PrimaryHero = () => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [progress, setProgress] = useState(0);
+  const videoRef = useRef(null);
+  const intervalRef = useRef(null);
+  const progressRef = useRef(null);
 
-  // Optimized slideshow with useCallback
-  const handleSlideChange = useCallback((index) => {
-    setCurrentSlide(index);
+  // Media items - mix of images and videos
+  const mediaItems = [
+    {
+      type: 'image',
+      src: image1,
+      alt: 'Industrial emissions contributing to carbon footprint',
+      title: 'Industrial Emissions',
+      description: 'Manufacturing and industrial processes account for 21% of global greenhouse gas emissions',
+      duration: 4000
+    },
+    {
+      type: 'video',
+      src: video1,
+      alt: 'Transportation carbon footprint video',
+      title: 'Transportation Impact',
+      description: 'Transportation is responsible for 16% of global emissions - every journey counts',
+      duration: null // Will be set based on video duration
+    },
+    {
+      type: 'image',
+      src: image2,
+      alt: 'Deforestation impact on carbon cycle',
+      title: 'Deforestation Crisis',
+      description: 'Forests absorb 2.6 billion tons of CO2 annually - their loss accelerates climate change',
+      duration: 4000
+    },
+    {
+      type: 'video',
+      src: video2,
+      alt: 'Energy consumption video',
+      title: 'Energy Consumption',
+      description: 'Global energy use produces 73% of greenhouse gas emissions worldwide',
+      duration: null
+    },
+    {
+      type: 'image',
+      src: image3,
+      alt: 'Agriculture and livestock emissions',
+      title: 'Agriculture & Livestock',
+      description: 'Food production contributes 18% of emissions - from farm to plate',
+      duration: 4000
+    },
+    {
+      type: 'video',
+      src: video3,
+      alt: 'Waste management impact',
+      title: 'Waste & Consumption',
+      description: 'Our consumption patterns and waste generate significant carbon emissions',
+      duration: null
+    }
+  ];
+
+  const currentItem = mediaItems[currentIndex];
+
+  // Handle video events
+  const handleVideoLoad = () => {
+    if (videoRef.current && currentItem.type === 'video') {
+      const duration = videoRef.current.duration * 1000;
+      mediaItems[currentIndex].duration = duration;
+    }
+  };
+
+  const handleVideoEnd = () => {
+    nextSlide();
+  };
+
+  // Progress bar animation
+  const startProgress = (duration) => {
+    setProgress(0);
+    if (progressRef.current) {
+      clearInterval(progressRef.current);
+    }
+    
+    const startTime = Date.now();
+    progressRef.current = setInterval(() => {
+      const elapsed = Date.now() - startTime;
+      const newProgress = Math.min((elapsed / duration) * 100, 100);
+      setProgress(newProgress);
+      
+      if (newProgress >= 100) {
+        clearInterval(progressRef.current);
+      }
+    }, 50);
+  };
+
+  // Auto-play functionality
+  const nextSlide = () => {
+    setCurrentIndex((prev) => (prev + 1) % mediaItems.length);
+  };
+
+  const prevSlide = () => {
+    setCurrentIndex((prev) => (prev - 1 + mediaItems.length) % mediaItems.length);
+  };
+
+  const goToSlide = (index) => {
+    setCurrentIndex(index);
+  };
+
+  const togglePlayPause = () => {
+    setIsPlaying(!isPlaying);
+    if (currentItem.type === 'video' && videoRef.current) {
+      if (isPlaying) {
+        videoRef.current.pause();
+      } else {
+        videoRef.current.play();
+      }
+    }
+  };
+
+  // Auto-advance slides
+  useEffect(() => {
+    if (!isPlaying) return;
+
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
+
+    if (currentItem.type === 'image') {
+      startProgress(currentItem.duration);
+      intervalRef.current = setTimeout(() => {
+        nextSlide();
+      }, currentItem.duration);
+    } else if (currentItem.type === 'video' && videoRef.current) {
+      videoRef.current.play();
+      if (currentItem.duration) {
+        startProgress(currentItem.duration);
+      }
+    }
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+      if (progressRef.current) {
+        clearInterval(progressRef.current);
+      }
+    };
+  }, [currentIndex, isPlaying]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+      if (progressRef.current) {
+        clearInterval(progressRef.current);
+      }
+    };
   }, []);
 
-  // Throttled auto-slideshow
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % mediaFiles.length);
-    }, 4000);
-
-    return () => clearInterval(interval);
-  }, [mediaFiles.length]);
-
-  // Memoize container styles for performance
-  const containerStyles = useMemo(() => ({
-    opacity: frameOpacity, 
-    transform: `scale3d(${frameScale}, ${frameScale}, 1) translate3d(0, ${scrollY / 8}px, 0)`,
-    pointerEvents: frameOpacity > 0.1 ? 'auto' : 'none',
-    willChange: 'transform, opacity',
-    contain: 'layout style paint',
-  }), [frameOpacity, frameScale, scrollY]);
-
   return (
-    <div 
-      className="relative w-full h-full flex items-center justify-center z-10 transition-all duration-700 ease-out overflow-hidden"
-      style={{
-        ...containerStyles,
-        background: `
-          radial-gradient(circle at 30% 20%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
-          radial-gradient(circle at 70% 80%, rgba(255, 119, 198, 0.2) 0%, transparent 50%),
-          radial-gradient(circle at 40% 60%, rgba(30, 144, 255, 0.15) 0%, transparent 50%),
-          linear-gradient(135deg, #0f0f23 0%, #1a1a2e 25%, #16213e 50%, #0f0f23 100%)
-        `,
-      }}
-    >
-      {/* Animated Background Elements */}
-      <div className="absolute inset-0 opacity-20">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-full blur-3xl animate-pulse" 
-             style={{ animationDuration: '4s' }} />
-        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-gradient-to-r from-pink-500/20 to-orange-500/20 rounded-full blur-3xl animate-pulse" 
-             style={{ animationDuration: '6s', animationDelay: '2s' }} />
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-cyan-500/15 to-teal-500/15 rounded-full blur-2xl animate-pulse" 
-             style={{ animationDuration: '8s', animationDelay: '4s' }} />
+    <section className="relative min-h-screen w-full overflow-hidden">
+      {/* Background Image with Overlay */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{
+          backgroundImage: `url(${bg1})`
+        }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/70"></div>
       </div>
 
-      {/* Floating Particles */}
-      <div className="absolute inset-0 pointer-events-none">
-        {[...Array(12)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute w-1 h-1 bg-white/30 rounded-full animate-bounce"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 5}s`,
-              animationDuration: `${3 + Math.random() * 4}s`,
-            }}
-          />
-        ))}
-      </div>
+      {/* Main Content */}
+      <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between min-h-screen">
+        
+        {/* Left Content */}
+        <div className="flex-1 px-6 lg:px-12 py-12 lg:py-0">
+          <div className="max-w-2xl mx-auto lg:mx-0 text-center lg:text-left">
+            
+            {/* Badge */}
+            <div className="inline-flex items-center gap-2 bg-green-500/20 backdrop-blur-sm border border-green-400/30 rounded-full px-4 py-2 mb-6">
+              <Leaf className="w-4 h-4 text-green-400" />
+              <span className="text-green-300 text-sm font-medium">Carbon Footprint Calculator</span>
+            </div>
 
-      {/* Desktop Frame - Premium Design */}
-      <div className="hidden lg:block relative z-10">
-        <div className="relative w-[1000px] h-[650px] transform hover:scale-105 transition-transform duration-300">
-          {/* Glowing Backdrop */}
-          <div className="absolute -inset-8 bg-gradient-to-br from-blue-500/20 via-purple-500/20 to-pink-500/20 rounded-3xl blur-2xl opacity-60 animate-pulse" />
-          
-          {/* Laptop Frame with Premium Materials */}
-          <div className="relative w-full h-full bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 rounded-t-3xl shadow-2xl border border-gray-700/50 backdrop-blur-sm">
-            {/* Premium Bezel with Subtle Glow */}
-            <div className="absolute inset-3 bg-gradient-to-br from-gray-950 to-black rounded-2xl overflow-hidden shadow-inner border border-gray-800/30">
-              {/* Inner Glow */}
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-purple-500/5 rounded-2xl" />
+            {/* Main Heading */}
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
+              Understand Your
+              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-400">
+                Carbon Impact
+              </span>
+            </h1>
+
+            {/* Description */}
+            <p className="text-lg md:text-xl text-gray-300 mb-8 leading-relaxed">
+              Discover the hidden environmental cost of your daily choices. Our comprehensive calculator helps you measure, understand, and reduce your personal carbon footprint for a sustainable future.
+            </p>
+
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+              <button className="group relative bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold px-8 py-4 rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-2xl">
+                <span className="relative z-10 flex items-center gap-2">
+                  <Globe className="w-5 h-5" />
+                  Calculate Now
+                </span>
+                <div className="absolute inset-0 bg-gradient-to-r from-green-400 to-green-500 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              </button>
               
-              {/* Screen Content */}
-              <div className="relative w-full h-full rounded-2xl overflow-hidden">
-                {mediaFiles.map((media, index) => (
-                  <div
-                    key={index}
-                    className={`absolute inset-0 transition-all duration-1000 ease-in-out ${
-                      index === currentSlide 
-                        ? 'opacity-100 transform scale-100 blur-none' 
-                        : 'opacity-0 transform scale-110 blur-sm'
-                    }`}
-                  >
-                    {media.type === 'image' ? (
-                      <img 
-                        src={media.src} 
-                        alt={media.alt} 
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <video 
-                        src={media.src} 
-                        autoPlay 
-                        muted 
-                        loop 
-                        className="w-full h-full object-cover"
-                      />
-                    )}
-                  </div>
-                ))}
-                
-                {/* Advanced Screen Reflection */}
-                <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-transparent pointer-events-none" />
-                <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent pointer-events-none" />
-                
-                {/* Subtle Vignette */}
-                <div className="absolute inset-0 bg-gradient-to-r from-black/10 via-transparent to-black/10 pointer-events-none" />
-              </div>
+              <button className="group border-2 border-white/30 hover:border-white/60 text-white font-semibold px-8 py-4 rounded-xl backdrop-blur-sm transition-all duration-300 hover:bg-white/10">
+                <span className="flex items-center gap-2">
+                  <Factory className="w-5 h-5" />
+                  Learn More
+                </span>
+              </button>
             </div>
-            
-            {/* Premium Camera with Glow */}
-            <div className="absolute top-4 left-1/2 transform -translate-x-1/2 flex items-center justify-center">
-              <div className="w-3 h-3 bg-gradient-to-br from-gray-700 to-gray-900 rounded-full shadow-lg border border-gray-600/30">
-                <div className="w-1.5 h-1.5 bg-gradient-to-br from-blue-400/50 to-transparent rounded-full m-auto mt-0.5" />
-              </div>
-            </div>
-            
-            {/* Brand Logo Area */}
-            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-gray-400/50 text-xs font-light tracking-wider">
-              PREMIUM
-            </div>
-          </div>
-          
-          {/* Laptop Base - Enhanced */}
-          <div className="absolute -bottom-3 left-1/2 transform -translate-x-1/2 w-[1050px] h-12 bg-gradient-to-b from-gray-800 via-gray-900 to-gray-950 rounded-b-3xl shadow-2xl border-t border-gray-700/30">
-            {/* Trackpad */}
-            <div className="absolute top-4 left-1/2 transform -translate-x-1/2 w-32 h-2 bg-gradient-to-r from-gray-700 via-gray-600 to-gray-700 rounded-full shadow-inner border border-gray-600/30" />
-            
-            {/* Subtle Branding */}
-            <div className="absolute top-2 right-8 text-gray-500/30 text-xs font-light tracking-widest">
-              PROFESSIONAL
-            </div>
-          </div>
-          
-          {/* Floating Shadow */}
-          <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 w-[900px] h-8 bg-black/20 rounded-full blur-xl" />
-        </div>
-      </div>
 
-      {/* Mobile Frame - Premium Design */}
-      <div className="lg:hidden relative z-10">
-        <div className="relative w-[360px] h-[740px] transform hover:scale-105 transition-transform duration-300">
-          {/* Glowing Backdrop */}
-          <div className="absolute -inset-6 bg-gradient-to-br from-blue-500/20 via-purple-500/20 to-pink-500/20 rounded-3xl blur-2xl opacity-60 animate-pulse" />
-          
-          {/* Phone Frame with Premium Materials */}
-          <div className="relative w-full h-full bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 rounded-[55px] shadow-2xl p-2 border border-gray-700/50 backdrop-blur-sm">
-            {/* Screen with Premium Bezel */}
-            <div className="relative w-full h-full bg-gradient-to-br from-gray-950 to-black rounded-[50px] overflow-hidden shadow-inner border border-gray-800/30">
-              {/* Dynamic Island */}
-              <div className="absolute top-6 left-1/2 transform -translate-x-1/2 w-28 h-8 bg-black rounded-full z-10 shadow-lg border border-gray-800/50">
-                <div className="absolute top-2 left-8 w-2 h-2 bg-gradient-to-br from-blue-400/50 to-transparent rounded-full" />
-                <div className="absolute top-2 right-8 w-2 h-2 bg-gradient-to-br from-green-400/50 to-transparent rounded-full" />
+            {/* Stats */}
+            <div className="grid grid-cols-3 gap-6 mt-12 pt-8 border-t border-white/20">
+              <div className="text-center lg:text-left">
+                <div className="text-2xl md:text-3xl font-bold text-white">73%</div>
+                <div className="text-sm text-gray-400">Energy Emissions</div>
               </div>
+              <div className="text-center lg:text-left">
+                <div className="text-2xl md:text-3xl font-bold text-white">4.8T</div>
+                <div className="text-sm text-gray-400">Avg Annual CO2</div>
+              </div>
+              <div className="text-center lg:text-left">
+                <div className="text-2xl md:text-3xl font-bold text-white">2030</div>
+                <div className="text-sm text-gray-400">Climate Target</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Media Slideshow */}
+        <div className="flex-1 px-6 lg:px-12 py-12 lg:py-0">
+          <div className="relative max-w-2xl mx-auto">
+            
+            {/* Media Container */}
+            <div className="relative aspect-video rounded-2xl overflow-hidden shadow-2xl bg-black/20 backdrop-blur-sm border border-white/10">
               
-              {/* Screen Content */}
-              <div className="relative w-full h-full pt-12 rounded-[50px] overflow-hidden">
-                {mediaFiles.map((media, index) => (
-                  <div
-                    key={index}
-                    className={`absolute inset-0 pt-12 transition-all duration-1000 ease-in-out ${
-                      index === currentSlide 
-                        ? 'opacity-100 transform scale-100 blur-none' 
-                        : 'opacity-0 transform scale-110 blur-sm'
-                    }`}
-                  >
-                    {media.type === 'image' ? (
-                      <img 
-                        src={media.src} 
-                        alt={media.alt} 
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <video 
-                        src={media.src} 
-                        autoPlay 
-                        muted 
-                        loop 
-                        className="w-full h-full object-cover"
-                      />
-                    )}
-                  </div>
-                ))}
+              {/* Media Content */}
+              <div className="relative w-full h-full">
+                {currentItem.type === 'image' ? (
+                  <img
+                    src={currentItem.src}
+                    alt={currentItem.alt}
+                    className="w-full h-full object-cover transition-all duration-1000 ease-in-out"
+                  />
+                ) : (
+                  <video
+                    ref={videoRef}
+                    src={currentItem.src}
+                    className="w-full h-full object-cover"
+                    onLoadedMetadata={handleVideoLoad}
+                    onEnded={handleVideoEnd}
+                    muted
+                    playsInline
+                  />
+                )}
                 
-                {/* Advanced Screen Reflection */}
-                <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-transparent pointer-events-none rounded-[50px]" />
-                <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent pointer-events-none rounded-[50px]" />
+                {/* Gradient Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
               </div>
+
+              {/* Media Info */}
+              <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+                <h3 className="text-xl font-bold mb-2">{currentItem.title}</h3>
+                <p className="text-sm text-gray-300 leading-relaxed">{currentItem.description}</p>
+              </div>
+
+              {/* Progress Bar */}
+              <div className="absolute top-0 left-0 right-0 h-1 bg-white/20">
+                <div 
+                  className="h-full bg-gradient-to-r from-green-400 to-blue-400 transition-all duration-75 ease-linear"
+                  style={{ width: `${progress}%` }}
+                ></div>
+              </div>
+
+              {/* Play/Pause Button */}
+              <button
+                onClick={togglePlayPause}
+                className="absolute top-4 right-4 bg-black/50 backdrop-blur-sm hover:bg-black/70 text-white p-3 rounded-full transition-all duration-300 hover:scale-110"
+              >
+                {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
+              </button>
+
+              {/* Navigation Arrows */}
+              <button
+                onClick={prevSlide}
+                className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 backdrop-blur-sm hover:bg-black/70 text-white p-3 rounded-full transition-all duration-300 hover:scale-110"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+              
+              <button
+                onClick={nextSlide}
+                className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 backdrop-blur-sm hover:bg-black/70 text-white p-3 rounded-full transition-all duration-300 hover:scale-110"
+              >
+                <ChevronRight className="w-5 h-5" />
+              </button>
             </div>
-            
-            {/* Premium Power Button */}
-            <div className="absolute right-0 top-36 w-1.5 h-16 bg-gradient-to-b from-gray-700 to-gray-900 rounded-l-full shadow-lg border-l border-gray-600/30" />
-            
-            {/* Premium Volume Buttons */}
-            <div className="absolute left-0 top-32 w-1.5 h-12 bg-gradient-to-b from-gray-700 to-gray-900 rounded-r-full shadow-lg border-r border-gray-600/30" />
-            <div className="absolute left-0 top-48 w-1.5 h-12 bg-gradient-to-b from-gray-700 to-gray-900 rounded-r-full shadow-lg border-r border-gray-600/30" />
+
+            {/* Slide Indicators */}
+            <div className="flex justify-center gap-3 mt-6">
+              {mediaItems.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => goToSlide(index)}
+                  className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                    index === currentIndex
+                      ? 'bg-gradient-to-r from-green-400 to-blue-400 scale-125'
+                      : 'bg-white/30 hover:bg-white/50'
+                  }`}
+                />
+              ))}
+            </div>
+
+            {/* Media Type Indicator */}
+            <div className="absolute -top-3 -right-3 bg-gradient-to-r from-green-500 to-blue-500 text-white px-3 py-1 rounded-full text-xs font-medium">
+              {currentIndex + 1} / {mediaItems.length}
+            </div>
           </div>
-          
-          {/* Floating Shadow */}
-          <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-80 h-6 bg-black/20 rounded-full blur-xl" />
         </div>
       </div>
 
-      {/* Premium Slide Indicators */}
-      <div className="absolute bottom-12 left-1/2 transform -translate-x-1/2 flex space-x-3 z-10 px-6 py-3 bg-white/10 backdrop-blur-lg rounded-full border border-white/20 shadow-lg">
-        {mediaFiles.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => handleSlideChange(index)}
-            className={`relative transition-all duration-500 cursor-pointer ${
-              index === currentSlide 
-                ? 'w-10 h-3 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full shadow-lg' 
-                : 'w-3 h-3 bg-white/40 hover:bg-white/60 rounded-full'
-            }`}
-            style={{ transform: 'translateZ(0)' }}
-          >
-            {index === currentSlide && (
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full animate-pulse" />
-            )}
-          </button>
-        ))}
+      {/* Floating Action Button */}
+      <div className="fixed bottom-8 right-8 z-50">
+        <button className="group bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white p-4 rounded-full shadow-2xl transition-all duration-300 transform hover:scale-110 hover:rotate-12">
+          <Leaf className="w-6 h-6 group-hover:animate-pulse" />
+        </button>
       </div>
 
-      {/* Elegant Corner Decorations */}
-      <div className="absolute top-8 left-8 w-16 h-16 border-l-2 border-t-2 border-white/20 rounded-tl-lg opacity-60" style={{ transform: 'translateZ(0)' }} />
-      <div className="absolute top-8 right-8 w-16 h-16 border-r-2 border-t-2 border-white/20 rounded-tr-lg opacity-60" style={{ transform: 'translateZ(0)' }} />
-      <div className="absolute bottom-8 left-8 w-16 h-16 border-l-2 border-b-2 border-white/20 rounded-bl-lg opacity-60" style={{ transform: 'translateZ(0)' }} />
-      <div className="absolute bottom-8 right-8 w-16 h-16 border-r-2 border-b-2 border-white/20 rounded-br-lg opacity-60" style={{ transform: 'translateZ(0)' }} />
-
-      {/* Premium Status Bar */}
-      <div className="absolute top-4 left-1/2 transform -translate-x-1/2 flex items-center space-x-4 text-white/60 text-sm font-light" style={{ transform: 'translateZ(0)' }}>
-        <div className="flex items-center space-x-2">
-          <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-          <span>LIVE</span>
+      {/* Scroll Indicator */}
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center text-white/60 animate-bounce">
+        <div className="text-sm mb-2">Scroll to explore</div>
+        <div className="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center">
+          <div className="w-1 h-3 bg-white/60 rounded-full mt-2 animate-pulse"></div>
         </div>
-        <div className="w-px h-4 bg-white/20" />
-        <span className="tracking-wider">PREMIUM SHOWCASE</span>
       </div>
-    </div>
+    </section>
   );
-});
-
-PrimaryHero.displayName = 'PrimaryHero';
+};
 
 export default PrimaryHero;
