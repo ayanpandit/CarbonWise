@@ -9,6 +9,7 @@ import MockCarbonTrail from './components/mockcarbontrail';
 import ActionTipList from './components/actiontiplist';
 import ImpactVisualizer from './components/impactvisualizer';
 import SubscribeCTA from './components/subscribecta';
+import Footer from './components/footer';
 function App() {
   return (
     <div className="App">
@@ -20,6 +21,7 @@ function App() {
       <ActionTipList />
       <ImpactVisualizer />
       <SubscribeCTA />
+      <Footer />
     </div>
   );
 }
