@@ -17,7 +17,7 @@ import { useAuth } from '../contexts/AuthContext'
 import { supabase } from '../lib/supabase'
 import ProfileManager from './ProfileManager'
 
-const UserProfile = () => {
+const UserProfile = ({ isMobile = false, onClose }) => {
   const { user, signOut } = useAuth()
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const [showProfileManager, setShowProfileManager] = useState(false)
@@ -99,20 +99,153 @@ const UserProfile = () => {
     try {
       await signOut()
       setIsDropdownOpen(false)
+      if (onClose) onClose() // Close mobile menu if provided
     } catch (error) {
       console.error('Error signing out:', error)
     }
   }
 
   const openProfileManager = () => {
+    console.log('openProfileManager called, setting showProfileManager to true')
     setShowProfileManager(true)
     setIsDropdownOpen(false)
+    if (onClose) onClose() // Close mobile menu if provided
+  }
+
+  const openProfileManagerMobile = () => {
+    console.log('openProfileManagerMobile called, setting showProfileManager to true')
+    setShowProfileManager(true)
+    // Don't close mobile menu immediately - let ProfileManager handle it
   }
 
   if (!user) return null
 
   const displayName = userProfile?.full_name || user.user_metadata?.full_name || user.email?.split('@')[0] || 'User'
   const avatarLetter = displayName.charAt(0).toUpperCase()
+
+  // Mobile version
+  if (isMobile) {
+    console.log('Mobile UserProfile render, showProfileManager:', showProfileManager)
+    return (
+      <>
+        <div className="space-y-4">
+          {/* Mobile Profile Header */}
+          <div className="flex items-center space-x-4 mb-6">
+            <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white/30">
+              {userProfile?.avatar_url ? (
+                <img 
+                  src={userProfile.avatar_url} 
+                  alt={displayName}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full bg-gradient-to-r from-emerald-500 to-green-600 flex items-center justify-center text-white font-semibold">
+                  {avatarLetter}
+                </div>
+              )}
+            </div>
+            <div className="flex-1 text-white">
+              <h3 className="font-semibold">{displayName}</h3>
+              <p className="text-gray-300 text-sm">{user.email}</p>
+              {userProfile?.username && (
+                <p className="text-gray-400 text-xs">@{userProfile.username}</p>
+              )}
+            </div>
+          </div>
+
+          {/* Mobile Stats */}
+          {loading ? (
+            <div className="grid grid-cols-3 gap-4 mb-6">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="animate-pulse">
+                  <div className="h-4 bg-white/20 rounded mb-2"></div>
+                  <div className="h-6 bg-white/20 rounded"></div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-3 gap-4 mb-6">
+              <div className="text-center">
+                <div className="flex items-center justify-center space-x-1 text-emerald-400 mb-1">
+                  <Leaf className="w-4 h-4" />
+                  <span className="text-xs text-gray-300">Carbon Saved</span>
+                </div>
+                <p className="text-white font-bold">{userProfile?.carbon_saved || 0}kg</p>
+              </div>
+              <div className="text-center">
+                <div className="flex items-center justify-center space-x-1 text-blue-400 mb-1">
+                  <BarChart3 className="w-4 h-4" />
+                  <span className="text-xs text-gray-300">Tracked Days</span>
+                </div>
+                <p className="text-white font-bold">{userProfile?.tracked_days || 0}</p>
+              </div>
+              <div className="text-center">
+                <div className="flex items-center justify-center space-x-1 text-purple-400 mb-1">
+                  <Award className="w-4 h-4" />
+                  <span className="text-xs text-gray-300">Level</span>
+                </div>
+                <p className="text-white font-bold text-sm">{userProfile?.level || 'Beginner'}</p>
+              </div>
+            </div>
+          )}
+
+          {/* Mobile Menu Options */}
+          <div className="space-y-2">
+            <button
+              onClick={() => {
+                console.log('Edit Profile clicked, opening ProfileManager...')
+                openProfileManagerMobile()
+              }}
+              className="w-full flex items-center space-x-3 p-3 rounded-xl text-white hover:bg-white/10 transition-all duration-300"
+            >
+              <Edit3 className="w-5 h-5 text-emerald-400" />
+              <span>Edit Profile</span>
+            </button>
+            
+            <button
+              className="w-full flex items-center space-x-3 p-3 rounded-xl text-white hover:bg-white/10 transition-all duration-300"
+            >
+              <BarChart3 className="w-5 h-5 text-blue-400" />
+              <span>My Dashboard</span>
+            </button>
+            
+            <button
+              className="w-full flex items-center space-x-3 p-3 rounded-xl text-white hover:bg-white/10 transition-all duration-300"
+            >
+              <Activity className="w-5 h-5 text-green-400" />
+              <span>My Activities</span>
+            </button>
+            
+            <button
+              className="w-full flex items-center space-x-3 p-3 rounded-xl text-white hover:bg-white/10 transition-all duration-300"
+            >
+              <Settings className="w-5 h-5 text-gray-400" />
+              <span>Preferences</span>
+            </button>
+            
+            <button
+              onClick={handleSignOut}
+              className="w-full flex items-center space-x-3 p-3 rounded-xl text-red-400 hover:bg-red-500/10 transition-all duration-300"
+            >
+              <LogOut className="w-5 h-5" />
+              <span>Sign Out</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Profile Manager Modal */}
+        <ProfileManager 
+          isOpen={showProfileManager} 
+          onClose={() => {
+            console.log('ProfileManager onClose called')
+            setShowProfileManager(false)
+            // Close mobile menu when ProfileManager closes
+            if (onClose) onClose()
+          }} 
+        />
+      </>
+    )
+  }
 
   return (
     <>

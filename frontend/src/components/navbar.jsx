@@ -29,6 +29,7 @@ const Navbar = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showProfileDetails, setShowProfileDetails] = useState(false);
   const navRef = useRef(null);
   
   const { user, loading } = useAuth();
@@ -102,6 +103,9 @@ const Navbar = () => {
 
   const toggleMobile = () => {
     setIsOpen(!isOpen);
+    if (isOpen) {
+      setShowProfileDetails(false); // Close profile modal when closing menu
+    }
   };
 
   const handleDropdown = (index) => {
@@ -337,23 +341,24 @@ const Navbar = () => {
             {/* Mobile CTA */}
             <div className="mt-8 pt-6 border-t border-white/10">
               {user ? (
-                <div className="text-center">
-                  <div className="flex items-center justify-center space-x-3 mb-4">
-                    <div className="w-10 h-10 bg-gradient-to-r from-emerald-500 to-green-600 rounded-full flex items-center justify-center text-white font-semibold">
-                      {user.user_metadata?.full_name?.charAt(0) || user.email?.charAt(0) || 'U'}
-                    </div>
-                    <div className="text-left">
-                      <p className="text-white font-medium">
-                        {user.user_metadata?.full_name || user.email?.split('@')[0]}
-                      </p>
-                      <p className="text-gray-300 text-sm">{user.email}</p>
-                    </div>
-                  </div>
-                  <button 
-                    onClick={() => {/* Add sign out logic */}}
-                    className="w-full bg-white/10 text-white py-3 rounded-xl font-semibold transition-all duration-300 hover:bg-white/20"
+                <div className="space-y-4">
+                  {/* Mobile Profile Header - Clickable to open modal */}
+                  <button
+                    onClick={() => setShowProfileDetails(true)}
+                    className="w-full flex items-center justify-between p-4 rounded-xl bg-white/10 hover:bg-white/20 transition-all duration-300"
                   >
-                    Sign Out
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 bg-gradient-to-r from-emerald-500 to-green-600 rounded-full flex items-center justify-center text-white font-semibold">
+                        {user.user_metadata?.full_name?.charAt(0) || user.email?.charAt(0) || 'U'}
+                      </div>
+                      <div className="text-left">
+                        <p className="text-white font-medium text-sm">
+                          {user.user_metadata?.full_name || user.email?.split('@')[0]}
+                        </p>
+                        <p className="text-gray-300 text-xs">{user.email}</p>
+                      </div>
+                    </div>
+                    <ChevronDown className="w-4 h-4 text-white" />
                   </button>
                 </div>
               ) : (
@@ -371,6 +376,35 @@ const Navbar = () => {
           </div>
         </div>
       </div>
+
+      {/* Mobile Profile Modal */}
+      {showProfileDetails && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 md:hidden">
+          <div className="absolute inset-x-4 top-20 bottom-4 bg-gradient-to-br from-gray-900 to-black rounded-2xl border border-white/10 overflow-hidden">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between p-6 border-b border-white/10">
+              <h2 className="text-xl font-bold text-white">Profile</h2>
+              <button
+                onClick={() => setShowProfileDetails(false)}
+                className="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors duration-200"
+              >
+                <X className="w-5 h-5 text-white" />
+              </button>
+            </div>
+            
+            {/* Modal Content */}
+            <div className="p-6 overflow-y-auto h-full">
+              <UserProfile 
+                isMobile={true} 
+                onClose={() => {
+                  setShowProfileDetails(false);
+                  setIsOpen(false);
+                }} 
+              />
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Auth Modal */}
       <AuthModal 
