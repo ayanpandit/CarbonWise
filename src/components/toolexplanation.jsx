@@ -1,10 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Search, BarChart3, CheckCircle, ArrowRight, Sparkles, Zap, Target, Brain, Lightbulb, TrendingUp } from 'lucide-react';
+import bg22 from '../assets/images/bg22.jpg';
+import bg22mobile from '../assets/images/bg22mobile.jpg';
 
 const ToolExplanation = () => {
   const [activeStep, setActiveStep] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [isMobile, setIsMobile] = useState(false);
   const sectionRef = useRef(null);
   const intervalRef = useRef(null);
 
@@ -99,6 +102,18 @@ const ToolExplanation = () => {
     return () => observer.disconnect();
   }, []);
 
+  // Mobile detection
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   // Mouse tracking for interactive effects
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -124,7 +139,14 @@ const ToolExplanation = () => {
   return (
     <section 
       ref={sectionRef}
-      className="relative min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 overflow-hidden"
+      className="relative min-h-screen overflow-hidden"
+      style={{
+        backgroundImage: `url(${isMobile ? bg22mobile : bg22})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        backgroundAttachment: 'scroll'
+      }}
     >
       {/* Dynamic Background Elements */}
       <div className="absolute inset-0">
@@ -166,20 +188,23 @@ const ToolExplanation = () => {
         {/* Header Section */}
         <div className={`text-center mb-12 sm:mb-16 lg:mb-20 transform transition-all duration-1000 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
           <div className="flex items-center justify-center mb-4 sm:mb-6">
-            <Sparkles className={`w-6 h-6 sm:w-8 sm:h-8 ${currentScheme.accent} mr-3`} />
-            <span className={`${currentScheme.accent} font-semibold text-sm sm:text-base uppercase tracking-wider`}>
+            <Sparkles className={`w-6 h-6 sm:w-8 sm:h-8 text-emerald-300 mr-3`} />
+            <span className={`text-emerald-300 font-semibold text-sm sm:text-base uppercase tracking-wider drop-shadow-md`}
+              style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.7)' }}>
               How CarbonWise Works
             </span>
           </div>
           
-          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 sm:mb-6 leading-tight">
+          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-4 sm:mb-6 leading-tight drop-shadow-lg"
+            style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8)' }}>
             Your Journey to
             <span className={`block bg-gradient-to-r ${currentScheme.primary} bg-clip-text text-transparent`}>
               Carbon Awareness
             </span>
           </h2>
           
-          <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-lg sm:text-xl text-white max-w-3xl mx-auto leading-relaxed drop-shadow-md"
+            style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.7)' }}>
             Discover how our intelligent platform transforms your daily habits into actionable environmental insights through three powerful steps.
           </p>
         </div>

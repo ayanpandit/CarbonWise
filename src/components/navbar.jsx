@@ -66,8 +66,7 @@ const Navbar = () => {
       name: 'Calculator',
       icon: Calculator,
       href: '#calculator',
-      gradient: 'from-green-400 to-emerald-500',
-      badge: 'New'
+      gradient: 'from-green-400 to-emerald-500'
     },
     {
       name: 'Learn',
@@ -166,10 +165,10 @@ const Navbar = () => {
               
               {/* Brand Text */}
               <div className="hidden sm:block">
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-white to-green-400 bg-clip-text text-transparent group-hover:from-green-400 group-hover:to-blue-400 transition-all duration-500">
-                  EcoTrack
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-800 to-green-600 bg-clip-text text-transparent group-hover:from-green-600 group-hover:to-blue-600 transition-all duration-500">
+                  CarbonWise
                 </h1>
-                <p className="text-xs text-gray-400 group-hover:text-green-300 transition-colors duration-300">
+                <p className="text-xs text-gray-600 group-hover:text-green-600 transition-colors duration-300">
                   Carbon Footprint Calculator
                 </p>
               </div>
@@ -182,7 +181,7 @@ const Navbar = () => {
                   {/* Main Nav Item */}
                   <button
                     onClick={() => item.dropdown && handleDropdown(index)}
-                    className="group relative flex items-center space-x-2 px-4 py-3 rounded-xl text-white/80 hover:text-white transition-all duration-300 hover:bg-white/5 backdrop-blur-sm"
+                    className="group relative flex items-center space-x-2 px-4 py-3 rounded-xl text-gray-700 hover:text-gray-900 transition-all duration-300 hover:bg-white/5 backdrop-blur-sm"
                   >
                     {/* Icon with Gradient Background */}
                     <div className={`relative p-2 rounded-lg bg-gradient-to-r ${item.gradient} opacity-0 group-hover:opacity-100 transition-all duration-300 transform scale-0 group-hover:scale-100`}>
@@ -193,7 +192,7 @@ const Navbar = () => {
                     <item.icon className="w-5 h-5 group-hover:opacity-0 transition-opacity duration-300" />
                     
                     {/* Text */}
-                    <span className="font-medium text-sm tracking-wide group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-green-300 group-hover:bg-clip-text group-hover:text-transparent transition-all duration-300">
+                    <span className="font-medium text-sm tracking-wide group-hover:bg-gradient-to-r group-hover:from-gray-800 group-hover:to-green-600 group-hover:bg-clip-text group-hover:text-transparent transition-all duration-300">
                       {item.name}
                     </span>
                     
@@ -227,10 +226,10 @@ const Navbar = () => {
                               <dropItem.icon className="w-4 h-4 text-white" />
                             </div>
                             <div className="flex-1">
-                              <h3 className="text-white font-medium text-sm group-hover:text-green-300 transition-colors duration-300">
+                              <h3 className="text-gray-800 font-medium text-sm group-hover:text-green-600 transition-colors duration-300">
                                 {dropItem.name}
                               </h3>
-                              <p className="text-gray-400 text-xs mt-1 group-hover:text-gray-300 transition-colors duration-300">
+                              <p className="text-gray-600 text-xs mt-1 group-hover:text-gray-700 transition-colors duration-300">
                                 {dropItem.desc}
                               </p>
                             </div>
@@ -294,8 +293,8 @@ const Navbar = () => {
                 <img src={logo} alt="EcoTrack" className="w-full h-full object-cover" />
               </div>
               <div>
-                <h2 className="text-white font-bold">EcoTrack</h2>
-                <p className="text-xs text-gray-400">Carbon Calculator</p>
+                <h2 className="text-gray-800 font-bold">EcoTrack</h2>
+                <p className="text-xs text-gray-600">Carbon Calculator</p>
               </div>
             </div>
 
@@ -305,7 +304,7 @@ const Navbar = () => {
                 <div key={item.name}>
                   <a
                     href={item.href}
-                    className="group flex items-center space-x-4 p-4 rounded-xl text-white/80 hover:text-white hover:bg-white/5 transition-all duration-300"
+                    className="group flex items-center space-x-4 p-4 rounded-xl text-gray-700 hover:text-gray-900 hover:bg-white/5 transition-all duration-300"
                     onClick={toggleMobile}
                   >
                     <div className={`p-2 rounded-lg bg-gradient-to-r ${item.gradient} opacity-70 group-hover:opacity-100 transition-opacity duration-300`}>

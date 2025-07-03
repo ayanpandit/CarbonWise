@@ -1,5 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Play, Zap, Droplets, Wind, Leaf, TrendingUp } from 'lucide-react';
+import { Play, Zap, Droplets, Wind, Leaf, TrendingUp, Globe, ArrowRight, BarChart3, Target, Users } from 'lucide-react';
+import cardBg from '../assets/images/cardbg.jpg';
+import bg22 from '../assets/images/bg22.jpg';
+import bg22mobile from '../assets/images/bg22mobile.jpg';
 
 const CauseCard = ({ 
   icon: IconComponent = Play,
@@ -7,47 +10,53 @@ const CauseCard = ({
   carbonFact = "≈ 55g CO₂",
   context = "That's like boiling 10 cups of water.",
   color = "emerald",
-  delay = 0
+  delay = 0,
+  index = 0
 }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const cardRef = useRef(null);
 
   // Professional color schemes
   const colorSchemes = {
     emerald: {
-      gradient: 'from-emerald-50 to-emerald-100',
-      iconBg: 'bg-emerald-500',
+      primary: 'from-emerald-600 to-emerald-700',
+      secondary: 'from-emerald-50 to-emerald-100',
       accent: 'text-emerald-600',
       border: 'border-emerald-200',
-      shadow: 'shadow-emerald-100'
-    },
-    amber: {
-      gradient: 'from-amber-50 to-amber-100',
-      iconBg: 'bg-amber-500',
-      accent: 'text-amber-600',
-      border: 'border-amber-200',
-      shadow: 'shadow-amber-100'
-    },
-    red: {
-      gradient: 'from-red-50 to-red-100',
-      iconBg: 'bg-red-500',
-      accent: 'text-red-600',
-      border: 'border-red-200',
-      shadow: 'shadow-red-100'
+      icon: 'bg-emerald-100',
+      hover: 'hover:bg-emerald-50'
     },
     blue: {
-      gradient: 'from-blue-50 to-blue-100',
-      iconBg: 'bg-blue-500',
+      primary: 'from-blue-600 to-blue-700',
+      secondary: 'from-blue-50 to-blue-100',
       accent: 'text-blue-600',
       border: 'border-blue-200',
-      shadow: 'shadow-blue-100'
+      icon: 'bg-blue-100',
+      hover: 'hover:bg-blue-50'
+    },
+    amber: {
+      primary: 'from-amber-600 to-amber-700',
+      secondary: 'from-amber-50 to-amber-100',
+      accent: 'text-amber-600',
+      border: 'border-amber-200',
+      icon: 'bg-amber-100',
+      hover: 'hover:bg-amber-50'
+    },
+    red: {
+      primary: 'from-red-600 to-red-700',
+      secondary: 'from-red-50 to-red-100',
+      accent: 'text-red-600',
+      border: 'border-red-200',
+      icon: 'bg-red-100',
+      hover: 'hover:bg-red-50'
     }
   };
 
   const scheme = colorSchemes[color] || colorSchemes.emerald;
 
-  // Intersection Observer for scroll animations
+  // Intersection observer for animations
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -65,204 +74,282 @@ const CauseCard = ({
     return () => observer.disconnect();
   }, [delay]);
 
+  // Mobile detection
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   return (
     <div
       ref={cardRef}
       className={`
-        w-full h-full
-        transform transition-all duration-500 ease-out
-        ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}
+        group relative w-full h-full
+        transform transition-all duration-700 ease-out
+        ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}
         ${isHovered ? 'scale-[1.02]' : 'scale-100'}
       `}
+      style={{ transitionDelay: `${delay}ms` }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Main Card */}
-      <div className={`
-        relative h-full
-        bg-gradient-to-br ${scheme.gradient}
-        border-2 ${scheme.border}
-        rounded-2xl sm:rounded-3xl
-        shadow-lg hover:shadow-xl ${scheme.shadow}
-        transition-all duration-300
-        overflow-hidden
-        p-4 sm:p-6 lg:p-8
-        cursor-pointer
-      `}>
+      {/* Card Container */}
+      <div 
+        className={`
+          relative h-full min-h-[280px] sm:min-h-[320px] lg:min-h-[360px]
+          border-2 ${scheme.border}
+          rounded-2xl
+          shadow-lg hover:shadow-xl
+          transition-all duration-500
+          overflow-hidden
+          ${scheme.hover}
+        `}
+        style={{
+          backgroundImage: `url(${cardBg})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
+        }}
+      >
+        {/* Background overlay for better text readability */}
+        <div className="absolute inset-0 bg-white/85 backdrop-blur-sm"></div>
         
-        {/* Header Section */}
-        <div className="flex items-start justify-between mb-4 sm:mb-6">
+        {/* Subtle accent line */}
+        <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${scheme.primary}`} />
+
+        {/* Content Container */}
+        <div className="relative z-10 h-full flex flex-col p-6 lg:p-8">
           
-          {/* Icon */}
-          <div className={`
-            ${scheme.iconBg} 
-            rounded-xl sm:rounded-2xl
-            p-2 sm:p-3 lg:p-4
-            shadow-lg
-            transform transition-transform duration-300
-            ${isHovered ? 'rotate-3' : 'rotate-0'}
-            flex-shrink-0
-          `}>
-            <IconComponent 
-              className="text-white w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6" 
-            />
+          {/* Header Section */}
+          <div className="flex items-start justify-between mb-6">
+            
+            {/* Professional Icon */}
+            <div className={`
+              flex-shrink-0
+              w-12 h-12 lg:w-16 lg:h-16
+              ${scheme.icon}
+              rounded-xl
+              shadow-sm
+              transform transition-all duration-500
+              ${isHovered ? 'scale-110' : 'scale-100'}
+              flex items-center justify-center
+            `}>
+              <IconComponent 
+                className={`${scheme.accent} w-6 h-6 lg:w-8 lg:h-8
+                  transition-all duration-300`} 
+              />
+            </div>
+
+            {/* Impact Badge */}
+            <div className={`
+              flex items-center space-x-2
+              bg-gradient-to-r ${scheme.secondary}
+              px-3 py-1.5
+              rounded-full ${scheme.border}
+              border
+              transform transition-all duration-300
+              ${isHovered ? 'scale-105' : 'scale-100'}
+            `}>
+              <TrendingUp className={`${scheme.accent} w-4 h-4`} />
+              <span className={`${scheme.accent} text-sm font-semibold`}>
+                Impact
+              </span>
+            </div>
           </div>
 
-          {/* Impact Badge */}
+          {/* Content Section */}
+          <div className="flex-1 space-y-4">
+            
+            {/* Title */}
+            <h3 className={`
+              text-gray-900 font-bold text-lg lg:text-xl
+              leading-tight
+              transform transition-all duration-500
+              ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}
+            `}>
+              {title}
+            </h3>
+
+            {/* Carbon Fact */}
+            <div className={`
+              inline-flex items-center space-x-3
+              bg-gradient-to-r ${scheme.secondary}
+              px-4 py-3
+              rounded-lg
+              border ${scheme.border}
+              transform transition-all duration-300
+              ${isHovered ? 'scale-105' : 'scale-100'}
+            `}>
+              <Leaf className={`${scheme.accent} w-5 h-5`} />
+              <span className={`${scheme.accent} font-bold text-base lg:text-lg`}>
+                {carbonFact}
+              </span>
+            </div>
+
+            {/* Context */}
+            <p className={`
+              text-gray-600 text-sm lg:text-base
+              leading-relaxed
+              transform transition-all duration-700
+              ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}
+            `}>
+              {context}
+            </p>
+          </div>
+
+          {/* Footer */}
           <div className={`
-            flex items-center space-x-1
-            bg-white/80 backdrop-blur-sm
-            px-2 py-1 sm:px-3 sm:py-1.5
-            rounded-full border ${scheme.border}
-            transform transition-all duration-300
-            ${isHovered ? 'scale-105' : 'scale-100'}
+            flex items-center justify-between 
+            mt-6 pt-4
+            border-t border-gray-100
+            transform transition-all duration-500
+            ${isHovered ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-90'}
           `}>
-            <TrendingUp className={`${scheme.accent} w-3 h-3 sm:w-4 sm:h-4`} />
-            <span className={`${scheme.accent} text-xs sm:text-sm font-medium`}>
-              Impact
-            </span>
+            
+            {/* Action Button */}
+            <button className={`
+              flex items-center space-x-2
+              bg-gradient-to-r ${scheme.primary}
+              text-white font-semibold
+              px-4 py-2
+              rounded-lg
+              transition-all duration-300
+              transform hover:scale-105
+              text-sm lg:text-base
+              shadow-sm hover:shadow-md
+            `}>
+              <span>Learn More</span>
+              <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
+            </button>
+
+            {/* Additional Info */}
+            <div className="flex space-x-2">
+              {[BarChart3, Globe].map((ActionIcon, idx) => (
+                <div
+                  key={idx}
+                  className={`
+                    w-8 h-8 lg:w-10 lg:h-10
+                    rounded-lg flex items-center justify-center
+                    ${scheme.icon}
+                    cursor-pointer transition-all duration-300
+                    hover:scale-110
+                    ${scheme.border} border
+                  `}
+                >
+                  <ActionIcon className={`${scheme.accent} w-4 h-4 lg:w-5 lg:h-5`} />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
-
-        {/* Content Section */}
-        <div className="space-y-3 sm:space-y-4">
-          
-          {/* Title */}
-          <h3 className="text-gray-800 font-bold text-lg sm:text-xl lg:text-2xl leading-tight">
-            {title}
-          </h3>
-
-          {/* Carbon Fact */}
-          <div className={`
-            inline-flex items-center space-x-2
-            bg-white/60 backdrop-blur-sm
-            px-3 py-2 sm:px-4 sm:py-2.5
-            rounded-xl border ${scheme.border}
-            transform transition-all duration-300
-            ${isHovered ? 'scale-105' : 'scale-100'}
-          `}>
-            <Leaf className={`${scheme.accent} w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0`} />
-            <span className={`${scheme.accent} font-bold text-sm sm:text-base lg:text-lg`}>
-              {carbonFact}
-            </span>
-          </div>
-
-          {/* Context */}
-          <p className="text-gray-600 text-sm sm:text-base leading-relaxed">
-            {context}
-          </p>
-        </div>
-
-        {/* Footer Section */}
-        <div className={`
-          flex items-center justify-between 
-          mt-4 sm:mt-6 pt-4 sm:pt-6
-          border-t border-gray-200
-          transform transition-all duration-300
-          ${isHovered ? 'translate-y-0' : 'translate-y-1'}
-        `}>
-          
-          {/* Learn More Button */}
-          <button className={`
-            flex items-center space-x-2
-            bg-white/80 hover:bg-white
-            px-3 py-2 sm:px-4 sm:py-2.5
-            rounded-xl border ${scheme.border}
-            text-gray-700 hover:text-gray-900
-            transition-all duration-200
-            transform hover:scale-105
-            text-sm sm:text-base font-medium
-          `}>
-            <span>Learn More</span>
-          </button>
-
-          {/* Action Icons */}
-          <div className="flex space-x-1 sm:space-x-2">
-            {[Wind, Droplets, Zap].map((ActionIcon, index) => (
-              <div
-                key={index}
-                className={`
-                  w-8 h-8 sm:w-9 sm:h-9 lg:w-10 lg:h-10
-                  rounded-full flex items-center justify-center
-                  bg-white/60 hover:bg-white/80
-                  border ${scheme.border}
-                  cursor-pointer transition-all duration-200
-                  hover:scale-110
-                `}
-              >
-                <ActionIcon className="text-gray-600 w-3 h-3 sm:w-4 sm:h-4" />
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Subtle Hover Effect */}
-        <div className={`
-          absolute inset-0 rounded-2xl sm:rounded-3xl
-          bg-gradient-to-r from-transparent via-white/10 to-transparent
-          transform transition-all duration-700
-          ${isHovered ? 'translate-x-full opacity-100' : '-translate-x-full opacity-0'}
-        `} />
       </div>
     </div>
   );
 };
 
-// Demo Component
+// Professional Demo Component
 const CauseCardDemo = () => {
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    setIsLoaded(true);
+  }, []);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   const cardData = [
     {
       icon: Play,
-      title: "Streaming for 1 Hour",
+      title: "Video Streaming",
       carbonFact: "≈ 55g CO₂",
-      context: "That's like boiling 10 cups of water.",
+      context: "One hour of HD streaming equals the emissions from boiling 10 cups of water.",
       color: "emerald",
       delay: 0
     },
     {
       icon: Zap,
-      title: "AC Running All Day",
+      title: "Air Conditioning",
       carbonFact: "≈ 2.1kg CO₂",
-      context: "Equivalent to driving 5 miles in a car.",
-      color: "amber",
-      delay: 100
+      context: "8 hours of cooling generates emissions equivalent to a 5-mile car journey.",
+      color: "blue",
+      delay: 150
     },
     {
       icon: Wind,
-      title: "Plastic Bag Usage",
+      title: "Plastic Bottle",
       carbonFact: "≈ 6g CO₂",
-      context: "Takes 1000 years to decompose naturally.",
-      color: "red",
-      delay: 200
+      context: "Production and disposal impact, plus 1,000 years to decompose naturally.",
+      color: "amber",
+      delay: 300
     },
     {
       icon: Droplets,
-      title: "Food Delivery Order",
+      title: "Food Delivery",
       carbonFact: "≈ 1.2kg CO₂",
-      context: "From packaging, transport, and preparation.",
-      color: "blue",
-      delay: 300
+      context: "Includes packaging materials, preparation, and last-mile transportation.",
+      color: "red",
+      delay: 450
     }
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-8">
-      <div className="max-w-7xl mx-auto">
+    <div 
+      className="relative min-h-screen"
+      style={{
+        backgroundImage: `url(${isMobile ? bg22mobile : bg22})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        backgroundAttachment: 'scroll'
+      }}
+    >
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12 relative z-10">
         
-        {/* Header */}
-        <div className="text-center mb-8 sm:mb-12 lg:mb-16">
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-800 mb-3 sm:mb-4">
-            What Just Happened?
+        {/* Professional Header */}
+        <div className={`text-center mb-12 lg:mb-16
+          transform transition-all duration-1000
+          ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
+          
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl
+            font-bold text-white
+            leading-tight tracking-tight
+            mb-4 lg:mb-6
+            drop-shadow-lg"
+            style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8)' }}>
+            Carbon Impact Analysis
           </h1>
-          <p className="text-base sm:text-lg lg:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            Understanding the carbon footprint of your daily activities through clear, actionable insights.
+          
+          <p className="text-lg lg:text-xl
+            text-white max-w-4xl mx-auto leading-relaxed
+            font-medium drop-shadow-md"
+            style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.7)' }}>
+            Understanding the environmental impact of everyday activities through 
+            <span className="text-emerald-300 font-bold"> data-driven insights</span> and 
+            actionable recommendations.
           </p>
         </div>
 
-        {/* Responsive Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
+        {/* Professional Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 
+          gap-6 lg:gap-8 mb-12 lg:mb-16">
           {cardData.map((card, index) => (
-            <div key={index} className="h-full min-h-[300px] sm:min-h-[320px] lg:min-h-[350px]">
+            <div key={index} className="h-full">
               <CauseCard
                 icon={card.icon}
                 title={card.title}
@@ -270,23 +357,67 @@ const CauseCardDemo = () => {
                 context={card.context}
                 color={card.color}
                 delay={card.delay}
+                index={index}
               />
             </div>
           ))}
         </div>
 
-        {/* Additional Info */}
-        <div className="mt-8 sm:mt-12 lg:mt-16 text-center">
-          <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-lg border border-gray-200 max-w-4xl mx-auto">
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-3 sm:mb-4">
-              Ready to Make a Difference?
-            </h2>
-            <p className="text-gray-600 text-sm sm:text-base mb-4 sm:mb-6 leading-relaxed">
-              CarbonWise helps you track, understand, and reduce your environmental impact through personalized insights and actionable recommendations.
-            </p>
-            <button className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-3 sm:px-8 sm:py-4 rounded-xl font-medium transition-colors duration-200 text-sm sm:text-base">
-              Start Your Carbon Journey
-            </button>
+        {/* Professional CTA Section */}
+        <div className={`max-w-4xl mx-auto
+          transform transition-all duration-1000 delay-500
+          ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
+          
+          <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-8 lg:p-12
+            hover:shadow-2xl transition-all duration-500">
+            
+            <div className="text-center">
+              <h2 className="text-2xl lg:text-3xl xl:text-4xl
+                font-bold text-gray-900 mb-4 lg:mb-6">
+                Ready to Reduce Your Carbon Footprint?
+              </h2>
+              
+              <p className="text-gray-600 text-lg lg:text-xl
+                mb-8 lg:mb-10 leading-relaxed 
+                max-w-3xl mx-auto">
+                Join thousands of organizations and individuals using our platform to track, 
+                analyze, and reduce their environmental impact through actionable insights.
+              </p>
+              
+              {/* Professional CTA Button */}
+              <button className="group inline-flex items-center justify-center
+                space-x-3 bg-gradient-to-r from-emerald-600 to-emerald-700
+                hover:from-emerald-700 hover:to-emerald-800
+                text-white px-8 py-4 lg:px-10 lg:py-5
+                rounded-xl font-semibold text-lg
+                shadow-lg hover:shadow-xl
+                transform hover:scale-105 transition-all duration-300">
+                
+                <Target className="w-5 h-5 lg:w-6 lg:h-6" />
+                <span>Get Started Today</span>
+                <ArrowRight className="w-5 h-5 lg:w-6 lg:h-6 
+                  transition-transform duration-300 group-hover:translate-x-1" />
+              </button>
+
+              {/* Feature highlights */}
+              <div className="mt-8 lg:mt-10 flex flex-wrap justify-center gap-4 lg:gap-6">
+                {[
+                  { icon: BarChart3, text: "Advanced Analytics" },
+                  { icon: Target, text: "Goal Setting" },
+                  { icon: Users, text: "Team Collaboration" }
+                ].map((feature, idx) => (
+                  <div key={idx} className="flex items-center space-x-2
+                    bg-gray-50 px-4 py-3 rounded-lg
+                    border border-gray-200
+                    hover:bg-gray-100 transition-colors duration-300">
+                    <feature.icon className="w-5 h-5 text-emerald-600" />
+                    <span className="text-gray-700 font-medium text-sm lg:text-base">
+                      {feature.text}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </div>

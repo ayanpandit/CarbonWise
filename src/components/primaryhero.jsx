@@ -266,8 +266,6 @@ const PrimaryHero = () => {
         }}
         key={deviceType === 'mobile' ? 'mobile' : 'desktop'}
       >
-        <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/70"></div>
-        
         {/* Animated background elements for desktop */}
         {deviceType === 'desktop' && (
           <>
@@ -291,15 +289,17 @@ const PrimaryHero = () => {
             </div>
 
             {/* Main Heading */}
-            <h1 className={`${classes.heading} font-bold text-white mb-4 leading-tight`}>
+            <h1 className={`${classes.heading} font-bold text-white mb-4 leading-tight drop-shadow-2xl`}
+                style={{ textShadow: '3px 3px 6px rgba(0,0,0,0.9), 1px 1px 3px rgba(0,0,0,0.8)' }}>
               Understand Your
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-400">
+              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-400 drop-shadow-lg">
                 Carbon Impact
               </span>
             </h1>
 
             {/* Description */}
-            <p className={`${classes.description} text-gray-300 mb-3 leading-relaxed ${deviceType === 'mobile' ? 'px-2' : ''}`}>
+            <p className={`${classes.description} text-white mb-3 leading-relaxed drop-shadow-lg ${deviceType === 'mobile' ? 'px-2' : ''}`}
+               style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8), 1px 1px 2px rgba(0,0,0,0.7)' }}>
               {deviceType === 'mobile' 
                 ? 'Measure and reduce your carbon footprint for a sustainable future.'
                 : 'Discover the hidden environmental cost of your daily choices. Our comprehensive calculator helps you measure, understand, and reduce your personal carbon footprint for a sustainable future.'

@@ -1,10 +1,20 @@
 import React, { useState, useEffect } from 'react';
+import bg22 from '../assets/images/bg22.jpg';
+import bg22mobile from '../assets/images/bg22mobile.jpg';
 
 const MockCarbonTrail = () => {
     const [isVisible, setIsVisible] = useState(false);
     const [animatedValues, setAnimatedValues] = useState({});
+    const [isMobile, setIsMobile] = useState(false);
 
     useEffect(() => {
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth < 768);
+        };
+        
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        
         setIsVisible(true);
         // Animate numbers counting up
         const timer = setTimeout(() => {
@@ -16,7 +26,11 @@ const MockCarbonTrail = () => {
                 transport: 1.6
             });
         }, 500);
-        return () => clearTimeout(timer);
+        
+        return () => {
+            clearTimeout(timer);
+            window.removeEventListener('resize', checkMobile);
+        };
     }, []);
 
     const activities = [
@@ -99,9 +113,18 @@ const MockCarbonTrail = () => {
     };
 
     return (
-        <section className="relative min-h-screen py-20 px-4 overflow-hidden bg-gradient-to-br from-slate-50 via-green-50/30 to-blue-50/40">
+        <section 
+            className="relative min-h-screen py-20 px-4 overflow-hidden"
+            style={{
+                backgroundImage: `url(${isMobile ? bg22mobile : bg22})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat',
+                backgroundAttachment: 'scroll'
+            }}
+        >
             {/* Animated Background Elements */}
-            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-20">
                 <div className="absolute top-20 left-10 w-72 h-72 bg-gradient-to-r from-green-200/20 to-blue-200/20 rounded-full blur-3xl animate-pulse"></div>
                 <div className="absolute bottom-20 right-10 w-96 h-96 bg-gradient-to-r from-purple-200/20 to-pink-200/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
                 <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-yellow-200/20 to-orange-200/20 rounded-full blur-3xl animate-pulse delay-500"></div>
@@ -110,21 +133,23 @@ const MockCarbonTrail = () => {
             <div className="relative max-w-7xl mx-auto">
                 {/* Header Section */}
                 <div className={`text-center mb-16 transition-all duration-1000 transform ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
-                    <div className="inline-flex items-center gap-3 mb-6 px-6 py-3 bg-white/40 backdrop-blur-xl rounded-full border border-white/20 shadow-lg">
+                    <div className="inline-flex items-center gap-3 mb-6 px-6 py-3 bg-white/60 backdrop-blur-xl rounded-full border border-white/20 shadow-lg">
                         <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                        <span className="text-sm font-medium text-slate-600">Live Carbon Tracking</span>
+                        <span className="text-sm font-medium text-slate-700">Live Carbon Tracking</span>
                     </div>
 
-                    <h2 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-slate-800 via-green-600 to-blue-600 bg-clip-text text-transparent mb-6 leading-tight">
+                    <h2 className="text-5xl md:text-6xl font-bold text-white mb-6 leading-tight drop-shadow-lg"
+                        style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8)' }}>
                         Your Personal
                         <br />
-                        <span className="text-4xl md:text-5xl">Carbon Trail</span>
+                        <span className="text-4xl md:text-5xl text-emerald-300">Carbon Trail</span>
                     </h2>
 
-                    <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
+                    <p className="text-xl text-white max-w-3xl mx-auto leading-relaxed drop-shadow-md"
+                        style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.7)' }}>
                         Here's how your daily habits could be contributing to carbon emissions.
                         <br />
-                        <span className="font-semibold text-green-600">Imagine this as your footprint — personalized by CarbonWise.</span>
+                        <span className="font-semibold text-emerald-300">Imagine this as your footprint — personalized by CarbonWise.</span>
                     </p>
                 </div>
 
