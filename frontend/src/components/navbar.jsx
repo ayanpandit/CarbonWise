@@ -15,6 +15,9 @@ import {
   Award,
   Shield
 } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
+import AuthModal from './AuthModal';
+import UserProfile from './UserProfile';
 
 // Import logo
 import logo from '/src/assets/images/logo.png';
@@ -25,7 +28,10 @@ const Navbar = () => {
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
   const navRef = useRef(null);
+  
+  const { user, loading } = useAuth();
 
   // Handle scroll effect
   useEffect(() => {
@@ -245,20 +251,27 @@ const Navbar = () => {
               ))}
             </div>
 
-            {/* CTA Button */}
+            {/* CTA Button / User Profile */}
             <div className="hidden md:block">
-              <button className="group relative overflow-hidden bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-400 hover:to-emerald-500 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 hover:shadow-2xl">
-                <span className="relative z-10 flex items-center space-x-2">
-                  <Shield className="w-4 h-4" />
-                  <span>Get Started</span>
-                </span>
-                
-                {/* Animated Background */}
-                <div className="absolute inset-0 bg-gradient-to-r from-emerald-400 to-green-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                
-                {/* Shine Effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
-              </button>
+              {user ? (
+                <UserProfile />
+              ) : (
+                <button 
+                  onClick={() => setShowAuthModal(true)}
+                  className="group relative overflow-hidden bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-400 hover:to-emerald-500 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 hover:shadow-2xl"
+                >
+                  <span className="relative z-10 flex items-center space-x-2">
+                    <Shield className="w-4 h-4" />
+                    <span>Get Started</span>
+                  </span>
+                  
+                  {/* Animated Background */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-emerald-400 to-green-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  
+                  {/* Shine Effect */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                </button>
+              )}
             </div>
 
             {/* Mobile Menu Button */}
@@ -323,13 +336,48 @@ const Navbar = () => {
 
             {/* Mobile CTA */}
             <div className="mt-8 pt-6 border-t border-white/10">
-              <button className="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white py-4 rounded-xl font-semibold transition-all duration-300 hover:shadow-lg">
-                Get Started Free
-              </button>
+              {user ? (
+                <div className="text-center">
+                  <div className="flex items-center justify-center space-x-3 mb-4">
+                    <div className="w-10 h-10 bg-gradient-to-r from-emerald-500 to-green-600 rounded-full flex items-center justify-center text-white font-semibold">
+                      {user.user_metadata?.full_name?.charAt(0) || user.email?.charAt(0) || 'U'}
+                    </div>
+                    <div className="text-left">
+                      <p className="text-white font-medium">
+                        {user.user_metadata?.full_name || user.email?.split('@')[0]}
+                      </p>
+                      <p className="text-gray-300 text-sm">{user.email}</p>
+                    </div>
+                  </div>
+                  <button 
+                    onClick={() => {/* Add sign out logic */}}
+                    className="w-full bg-white/10 text-white py-3 rounded-xl font-semibold transition-all duration-300 hover:bg-white/20"
+                  >
+                    Sign Out
+                  </button>
+                </div>
+              ) : (
+                <button 
+                  onClick={() => {
+                    setShowAuthModal(true);
+                    setIsOpen(false);
+                  }}
+                  className="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white py-4 rounded-xl font-semibold transition-all duration-300 hover:shadow-lg"
+                >
+                  Get Started Free
+                </button>
+              )}
             </div>
           </div>
         </div>
       </div>
+
+      {/* Auth Modal */}
+      <AuthModal 
+        isOpen={showAuthModal} 
+        onClose={() => setShowAuthModal(false)} 
+        initialMode="login"
+      />
 
       {/* Custom Styles */}
       <style jsx>{`
