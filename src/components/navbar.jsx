@@ -181,7 +181,7 @@ const Navbar = () => {
                   {/* Main Nav Item */}
                   <button
                     onClick={() => item.dropdown && handleDropdown(index)}
-                    className="group relative flex items-center space-x-2 px-4 py-3 rounded-xl text-gray-700 hover:text-gray-900 transition-all duration-300 hover:bg-white/5 backdrop-blur-sm"
+                    className="group relative flex items-center space-x-2 px-4 py-3 rounded-xl text-gray-800 hover:text-gray-900 transition-all duration-300 hover:bg-white/5 backdrop-blur-sm"
                   >
                     {/* Icon with Gradient Background */}
                     <div className={`relative p-2 rounded-lg bg-gradient-to-r ${item.gradient} opacity-0 group-hover:opacity-100 transition-all duration-300 transform scale-0 group-hover:scale-100`}>
@@ -293,8 +293,8 @@ const Navbar = () => {
                 <img src={logo} alt="EcoTrack" className="w-full h-full object-cover" />
               </div>
               <div>
-                <h2 className="text-gray-800 font-bold">EcoTrack</h2>
-                <p className="text-xs text-gray-600">Carbon Calculator</p>
+                <h2 className="text-white font-bold">EcoTrack</h2>
+                <p className="text-xs text-gray-300">Carbon Calculator</p>
               </div>
             </div>
 
@@ -304,7 +304,7 @@ const Navbar = () => {
                 <div key={item.name}>
                   <a
                     href={item.href}
-                    className="group flex items-center space-x-4 p-4 rounded-xl text-gray-700 hover:text-gray-900 hover:bg-white/5 transition-all duration-300"
+                    className="group flex items-center space-x-4 p-4 rounded-xl text-white hover:text-gray-200 hover:bg-white/5 transition-all duration-300"
                     onClick={toggleMobile}
                   >
                     <div className={`p-2 rounded-lg bg-gradient-to-r ${item.gradient} opacity-70 group-hover:opacity-100 transition-opacity duration-300`}>

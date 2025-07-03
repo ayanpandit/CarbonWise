@@ -12,6 +12,7 @@ import bg1Mobile from '../assets/images/bg1(2).jpg';
 import video1 from '../assets/videos/1.mp4';
 import video2 from '../assets/videos/2.mp4';
 import video3 from '../assets/videos/3.mp4';
+import video4 from '../assets/videos/4.mp4';
 
 const PrimaryHero = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -26,19 +27,19 @@ const PrimaryHero = () => {
   // Media items - mix of images and videos
   const mediaItems = [
     {
-      type: 'image',
-      src: image1,
+      type: 'video',
+      src: video4,
       alt: 'Industrial emissions contributing to carbon footprint',
       title: 'Industrial Emissions',
       description: 'Manufacturing and industrial processes account for 21% of global greenhouse gas emissions',
-      duration: 4000
+      duration: null
     },
     {
       type: 'video',
       src: video1,
       alt: 'Transportation carbon footprint video',
-      title: 'Transportation Impact',
-      description: 'Transportation is responsible for 16% of global emissions - every journey counts',
+      title: '',
+      description: '',
       duration: null // Will be set based on video duration
     },
     {
@@ -53,8 +54,8 @@ const PrimaryHero = () => {
       type: 'video',
       src: video2,
       alt: 'Energy consumption video',
-      title: 'Energy Consumption',
-      description: 'Global energy use produces 73% of greenhouse gas emissions worldwide',
+      title: '',
+      description: '',
       duration: null
     },
     {
@@ -69,8 +70,8 @@ const PrimaryHero = () => {
       type: 'video',
       src: video3,
       alt: 'Waste management impact',
-      title: 'Waste & Consumption',
-      description: 'Our consumption patterns and waste generate significant carbon emissions',
+      title: '',
+      description: '',
       duration: null
     }
   ];
@@ -253,26 +254,32 @@ const PrimaryHero = () => {
   const classes = getResponsiveClasses();
 
   return (
-    <section className="relative min-h-screen w-full overflow-hidden">
-      {/* Background with enhanced mobile optimization */}
+    <section className="h-screen w-full overflow-hidden sticky top-0 z-10">
+      {/* Enhanced Background with scroll-based parallax */}
       <div 
-        className="absolute inset-0 transition-all duration-500"
+        className="absolute inset-0 transition-all duration-1000 ease-out"
         style={{
           backgroundImage: deviceType === 'mobile' ? `url("${bg1Mobile}")` : `url("${bg1}")`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
-          backgroundColor: '#1a1a2e' // Fallback color
+          backgroundColor: '#1a1a2e', // Fallback color
+          transform: 'scale(1.1)', // Slight scale for parallax effect
+          filter: 'brightness(1.1) contrast(1.05)'
         }}
         key={deviceType === 'mobile' ? 'mobile' : 'desktop'}
       >
-        {/* Animated background elements for desktop */}
+        {/* Enhanced animated background elements */}
         {deviceType === 'desktop' && (
           <>
-            <div className="absolute top-20 left-20 w-32 h-32 bg-green-500/10 rounded-full blur-xl animate-pulse"></div>
-            <div className="absolute bottom-20 right-20 w-48 h-48 bg-blue-500/10 rounded-full blur-xl animate-pulse delay-1000"></div>
+            <div className="absolute top-20 left-20 w-32 h-32 bg-green-500/15 rounded-full blur-xl animate-pulse"></div>
+            <div className="absolute bottom-20 right-20 w-48 h-48 bg-blue-500/15 rounded-full blur-xl animate-pulse delay-1000"></div>
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl animate-spin" style={{ animationDuration: '20s' }}></div>
           </>
         )}
+        
+        {/* Overlay gradient for smooth transition effect */}
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/20 transition-opacity duration-1000"></div>
       </div>
 
       {/* Main Content */}
@@ -325,18 +332,24 @@ const PrimaryHero = () => {
             </div>
 
             {/* Stats */}
-            <div className={`grid ${classes.stats} border-t border-white/20`}>
+            <div className={`grid ${classes.stats} border-t border-gray-400/30`}>
               <div className={`text-center ${deviceType !== 'mobile' ? 'lg:text-left' : ''}`}>
-                <div className={`font-bold text-white ${deviceType === 'mobile' ? 'text-xl' : 'text-2xl md:text-3xl'}`}>73%</div>
-                <div className={`text-gray-400 ${deviceType === 'mobile' ? 'text-xs' : 'text-sm'}`}>Energy Emissions</div>
+                <div className={`font-bold text-gray-800 ${deviceType === 'mobile' ? 'text-xl' : 'text-2xl md:text-3xl'}`}
+                     style={{ textShadow: '1px 1px 2px rgba(255,255,255,0.8)' }}>73%</div>
+                <div className={`text-gray-600 ${deviceType === 'mobile' ? 'text-xs' : 'text-sm'}`}
+                     style={{ textShadow: '1px 1px 2px rgba(255,255,255,0.6)' }}>Energy Emissions</div>
               </div>
               <div className={`text-center ${deviceType !== 'mobile' ? 'lg:text-left' : ''}`}>
-                <div className={`font-bold text-white ${deviceType === 'mobile' ? 'text-xl' : 'text-2xl md:text-3xl'}`}>4.8T</div>
-                <div className={`text-gray-400 ${deviceType === 'mobile' ? 'text-xs' : 'text-sm'}`}>Avg Annual CO2</div>
+                <div className={`font-bold text-gray-800 ${deviceType === 'mobile' ? 'text-xl' : 'text-2xl md:text-3xl'}`}
+                     style={{ textShadow: '1px 1px 2px rgba(255,255,255,0.8)' }}>4.8T</div>
+                <div className={`text-gray-600 ${deviceType === 'mobile' ? 'text-xs' : 'text-sm'}`}
+                     style={{ textShadow: '1px 1px 2px rgba(255,255,255,0.6)' }}>Avg Annual CO2</div>
               </div>
               <div className={`text-center ${deviceType !== 'mobile' ? 'lg:text-left' : ''}`}>
-                <div className={`font-bold text-white ${deviceType === 'mobile' ? 'text-xl' : 'text-2xl md:text-3xl'}`}>2030</div>
-                <div className={`text-gray-400 ${deviceType === 'mobile' ? 'text-xs' : 'text-sm'}`}>Climate Target</div>
+                <div className={`font-bold text-gray-800 ${deviceType === 'mobile' ? 'text-xl' : 'text-2xl md:text-3xl'}`}
+                     style={{ textShadow: '1px 1px 2px rgba(255,255,255,0.8)' }}>2030</div>
+                <div className={`text-gray-600 ${deviceType === 'mobile' ? 'text-xs' : 'text-sm'}`}
+                     style={{ textShadow: '1px 1px 2px rgba(255,255,255,0.6)' }}>Climate Target</div>
               </div>
             </div>
           </div>

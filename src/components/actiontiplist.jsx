@@ -1,9 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
+import bg22 from '../assets/images/bg22.jpg';
+import bg22mobile from '../assets/images/bg22mobile.jpg';
 
 const ActionTipList = () => {
   const [visibleCards, setVisibleCards] = useState([]);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [hoveredCard, setHoveredCard] = useState(null);
+  const [isMobile, setIsMobile] = useState(false);
   const sectionRef = useRef(null);
 
   const actionTips = [
@@ -95,6 +98,18 @@ const ActionTipList = () => {
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
+  // Mobile detection
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   const FloatingBlob = ({ delay = 0, size = 'w-32 h-32', position = 'top-10 left-10' }) => (
     <div 
       className={`absolute ${position} ${size} rounded-full opacity-20 blur-xl animate-pulse`}
@@ -121,11 +136,13 @@ const ActionTipList = () => {
   return (
     <section 
       ref={sectionRef}
-      className="relative min-h-screen py-20 px-4 overflow-hidden"
+      className="relative min-h-screen py-20 px-4 overflow-hidden z-20"
       style={{
-        background: 'linear-gradient(135deg, #f0f9ff 0%, #ecfdf5 25%, #fef7cd 50%, #fdf2f8 75%, #f0f9ff 100%)',
-        backgroundSize: '400% 400%',
-        animation: 'gradientShift 15s ease infinite'
+        backgroundImage: `url(${isMobile ? bg22mobile : bg22})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        backgroundAttachment: 'scroll'
       }}
     >
       <ParticleTrail />

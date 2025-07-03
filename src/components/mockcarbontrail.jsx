@@ -114,7 +114,7 @@ const MockCarbonTrail = () => {
 
     return (
         <section 
-            className="relative min-h-screen py-20 px-4 overflow-hidden"
+            className="relative min-h-screen py-20 px-4 overflow-hidden z-20"
             style={{
                 backgroundImage: `url(${isMobile ? bg22mobile : bg22})`,
                 backgroundSize: 'cover',

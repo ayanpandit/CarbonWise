@@ -139,7 +139,7 @@ const ToolExplanation = () => {
   return (
     <section 
       ref={sectionRef}
-      className="relative min-h-screen overflow-hidden"
+      className="relative min-h-screen overflow-hidden z-20"
       style={{
         backgroundImage: `url(${isMobile ? bg22mobile : bg22})`,
         backgroundSize: 'cover',

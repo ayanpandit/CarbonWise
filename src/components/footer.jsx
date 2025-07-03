@@ -41,7 +41,7 @@ const Footer = () => {
   return (
     <footer 
       id="carbon-footer"
-      className="relative bg-gradient-to-br from-emerald-950 via-teal-900 to-green-900 text-white overflow-hidden"
+      className="relative text-white overflow-hidden z-20 bg-gradient-to-br from-emerald-900 via-green-800 to-teal-900"
     >
       {/* Animated Background Elements */}
       <div className="absolute inset-0 opacity-10">

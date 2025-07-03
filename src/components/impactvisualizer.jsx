@@ -1,10 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ChevronRight, Globe, TreePine, Waves, Sun, Heart, Zap } from 'lucide-react';
+import bg22 from '../assets/images/bg22.jpg';
+import bg22mobile from '../assets/images/bg22mobile.jpg';
 
 const ImpactVisualizer = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [activePanel, setActivePanel] = useState(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [isMobile, setIsMobile] = useState(false);
   const sectionRef = useRef(null);
 
   useEffect(() => {
@@ -29,6 +32,18 @@ const ImpactVisualizer = () => {
 
     window.addEventListener('mousemove', handleMouseMove);
     return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
+  // Mobile detection
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
   const AnimatedBackground = () => (
@@ -155,7 +170,17 @@ const ImpactVisualizer = () => {
   );
 
   return (
-    <section ref={sectionRef} className="relative min-h-screen py-20 md:py-32 overflow-hidden">
+    <section 
+      ref={sectionRef} 
+      className="relative min-h-screen py-20 md:py-32 overflow-hidden z-20"
+      style={{
+        backgroundImage: `url(${isMobile ? bg22mobile : bg22})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        backgroundAttachment: 'scroll'
+      }}
+    >
       <AnimatedBackground />
       
       <div className="relative container mx-auto px-6 md:px-12 max-w-7xl">

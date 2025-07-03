@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import bg22 from '../assets/images/bg22.jpg';
+import bg22mobile from '../assets/images/bg22mobile.jpg';
 
 const SubscribeCTA = () => {
   const [email, setEmail] = useState('');
   const [isHovered, setIsHovered] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -12,6 +15,18 @@ const SubscribeCTA = () => {
     };
     window.addEventListener('mousemove', handleMouseMove);
     return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
+  // Mobile detection
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
   const handleSubmit = () => {
@@ -51,7 +66,16 @@ const SubscribeCTA = () => {
   );
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-slate-50 via-emerald-50 to-teal-50">
+    <section 
+      className="relative min-h-screen flex items-center justify-center overflow-hidden z-20"
+      style={{
+        backgroundImage: `url(${isMobile ? bg22mobile : bg22})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        backgroundAttachment: 'scroll'
+      }}
+    >
       {/* Animated Background Elements */}
       <div className="absolute inset-0">
         <FloatingShape delay={0} size="w-64 h-64" position="top-10 left-10" />
