@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import bg22 from '../assets/images/bg22.jpg';
-import bg22mobile from '../assets/images/bg22mobile.jpg';
+import bg22 from '../assets/images/bg22.svg';
+import bg22mobile from '../assets/images/bg22mobile.svg';
 
 const SubscribeCTA = () => {
   const [email, setEmail] = useState('');

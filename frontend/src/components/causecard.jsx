@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Play, Zap, Droplets, Wind, Leaf, TrendingUp, Globe, ArrowRight, BarChart3, Target, Users } from 'lucide-react';
-import cardBg from '../assets/images/cardbg.jpg';
-import bg22 from '../assets/images/bg22.jpg';
-import bg22mobile from '../assets/images/bg22mobile.jpg';
+import cardBg from '../assets/images/cardbg.svg';
+import bg22 from '../assets/images/bg22.svg';
+import bg22mobile from '../assets/images/bg22mobile.svg';
 
 const CauseCard = ({ 
   icon: IconComponent = Play,

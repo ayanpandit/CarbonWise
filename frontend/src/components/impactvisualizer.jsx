@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ChevronRight, Globe, TreePine, Waves, Sun, Heart, Zap } from 'lucide-react';
-import bg22 from '../assets/images/bg22.jpg';
-import bg22mobile from '../assets/images/bg22mobile.jpg';
+import bg22 from '../assets/images/bg22.svg';
+import bg22mobile from '../assets/images/bg22mobile.svg';
 
 const ImpactVisualizer = () => {
   const [isVisible, setIsVisible] = useState(false);

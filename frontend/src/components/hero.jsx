@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronDown, Leaf, Calculator, Users, Award } from 'lucide-react';
-import image1 from '../assets/images/1.jpg';
-import image2 from '../assets/images/2.jpg';
-import image3 from '../assets/images/3.jpg';
+import image1 from '../assets/images/1.svg';
+import image2 from '../assets/images/2.svg';
+import image3 from '../assets/images/3.svg';
 import video1 from '../assets/videos/1.mp4';
 import video2 from '../assets/videos/2.mp4';
-import newBgImage from '../assets/images/newbg.jpg';
+import newBgImage from '../assets/images/newbg.svg';
 
 const Hero = () => {
   const [currentSlide, setCurrentSlide] = useState(0);

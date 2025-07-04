@@ -2,11 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import { ChevronLeft, ChevronRight, Play, Pause, Leaf, Globe, Factory } from 'lucide-react';
 
 // Import images
-import image1 from '../assets/images/1.jpg';
-import image2 from '../assets/images/2.jpg';
-import image3 from '../assets/images/3.jpg';
-import bg1 from '../assets/images/bg1.jpg';
-import bg1Mobile from '../assets/images/bg1(2).jpg';
+
+import image2 from '../assets/images/2.svg';
+import image3 from '../assets/images/3.svg';
+import bg1 from '../assets/images/bg1.svg';
+import bg1Mobile from '../assets/images/bg1(2).svg';
 
 // Import videos
 import video1 from '../assets/videos/1.mp4';

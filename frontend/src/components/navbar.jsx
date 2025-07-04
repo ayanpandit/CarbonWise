@@ -20,7 +20,7 @@ import AuthModal from './AuthModal';
 import UserProfile from './UserProfile';
 
 // Import logo
-import logo from '/src/assets/images/logo.png';
+import logo from '/src/assets/images/logo.svg';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
